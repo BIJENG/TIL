@@ -1,0 +1,57 @@
+
+변수, 타입 ---> 제어문 ---> 함수
+
+타입(data type) 사이즈가 바뀌는지 룰이 바뀌는지가 제일 중요
+
+제어문은 순차적구조, 조건적구조, 순환적구조가 있다.
+1) 순차적구조 ex) int a = 10 ----> a = 10
+2) 조건적구조 ex) if문, switch문
+3) 순환적구조 ex) for문, while문
+
+if문 (boolean - expression) 표현식 !!!!!
+if문은 수직선을 그려보는게 가장중요 !!! 습관을 들이자
+문제가 제대로 되어 있는지 확인하고 범위를 확인
+
+switch문
+어떤 값하나가 딱 정해져있음
+switch
+  case
+  break; ****
+
+순환  - 결정 for문
+      - 미결정 while, do while
+      - 발전형(Hybrid) correction framework
+
+" 디버거 " - break point
+          - step over
+
+----------------------------------------------------------
+
+1 형변환  2 함수
+
+형변환 - data type conversion / data-type  1) primitive type - 정수 , 실수 , 스트링 등
+                                          2) reference type - 형 변환 대상아님
+
+형 변환한다는건 size , bit rule 규칙을 바꾼다는것임 / 애초에 실수한건 아닌가 고민해봐야함 ex) 아이스티잔에 커피를 넣으면 커피맛은남 but 애당초 커피잔에 마시면됨
+ex)         int  ------> short
+  size:     4byte        2byte     ====> 컴퓨터는 안됨 size가 높은거에서 작은거로는 불가능하다 
+  bit rule: 정수          정수            but int(4byte) -> double(8byte) 가능  반대로도 할수는 있으나 원래는 안되는것!!! (실제로해보면 경고 메세지가 뜸)
+
+ex2)        float  ----> int
+  size:     4byte        4byte     ====> 변환 가능하나 실수인 부분을 버리고 처리 *****
+  bit rule:  실수         정수            
+             5.76  ---->   5   
+
+---------------------------------------------------------
+
+함수 = 원인은 여러개 일 수도 있으나 결과는 하나
+함수는 class 안에 있어야함
+fuction prototype (함수원형) 
+
+public static 리턴값 함수명(원인)
+
+
+
+
+
+                                          
