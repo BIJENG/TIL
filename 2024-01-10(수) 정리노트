@@ -1,0 +1,24 @@
+JAVA에서 함수는 " Method " 라고 함  ===> Class 가 내부에 존재
+but 다른 곳은 " fuction " 이라고 씀 ===> Class 가 외부에 존재
+
+----------------------------------------------------------------
+
+primitive type 은 데이타타입에 이름을 붙일 수 있다
+reference type 은 이름을 붙일 수 없다.
+**메모리에 이름을 붙인다는 것은 메모리가 할당이 된다는 가정하에 이루어지는 행동이다. (동작방식 메커니즘)
+메모리라는 것은 크기가 확정이돼야 이름을 붙인다!!!
+
+메모리 할당방법에는 2가지가 있다.
+
+1) CTB(Compile-Time Binding) - 
+primitive type
+stack area
+변수명을 붙일수 있다.
+컴파일 시점에 메모리에 사용량, 기타정보를 알 수 있다.
+
+2) RTB(Run-Time Binding) 
+reference type
+heap area
+변수명을 붙일 수 없다
+(Non-primitive type(참조타입)만 할당
+ex) Scanner scan = new scanner();    <--------new 를 넣어 참조값을 stack에 적재
