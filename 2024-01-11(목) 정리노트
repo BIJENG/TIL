@@ -1,0 +1,35 @@
+Compile-Time binding 과 Run-Time Binding  비교
+
+Compile-Time binding
+- 컴파일 시점에 메모리 할당
+- Stack area, Global area
+- 변수명을 통해서 Read and Write
+- Primitive-Type
+
+Run-Time Binding
+-실행시점에서 메모리 할당
+-Heap area에 할당
+-참조값(주소값)을 통해 Read and Write
+- Non-Primitive-Type
+
+------------------------------------------------------
+
+Stack 은 '선입 후출 구조'
+ex) 1 -> 2 -> 3 순으로 적재하면 3 -> 2 -> 1 순으로 나감 
+
+Queue 는 '선입 선출 구조'
+ex) 1 -> 2 -> 3 순으로 들어가면 1 -> 2 -> 3 순으로 나감
+
+SP(Stack Pointer)
+- 다음 호출 될 함수가 저장될 위치정보
+- SP 가 0이 되면 App 종료 = Stack overflow
+
+-----------------------------------------------------
+
+Array 란 데이터 타입이 N번 반복하고있으면 반복하는 데이터 타입을 묶은 메모리 블럭
+
+int[] ar = new int[20]   int 가 20개 있다
+
+int[][] ar2 = new int[5][4] int[4] 가 5개 있다
+
+둘은 데이타량은 4byte x 20 = 80byte 로 같으나 어면히 다른 array
