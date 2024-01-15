@@ -1,0 +1,33 @@
+클래쓰에 대해서 배우기시작
+
+컴퓨터 프로그램은
+1. 자료구조 + 연산 = 알고리즘(Algorithm)
+
+연산  
+복잡한 연산을 또 함수로 만듦
+연산을 논리적으로 잘 구현해낸것은 로직(Logic) 이라함
+잘 구성해낸 연산집합 = 로직(Logic)
+
+C++ 에서 클래스라는 말을 쓰기 시작함
+
+클래쓰는 객체를 생성하는데 필요함
+Object = instance = 객체
+ex) 클래쓰는 붕어빵틀, 객체는 붕어빵 이라는 말을 자주 사용하는데 이해하기 쉬우려고 하는말이고 사실이 아님
+
+문제풀이
+성적관리 프로그램을 구현하고자 합니다.
+학생은 국어, 영어, 수학 점수를 가지고 있습니다.
+학생의 총점 , 평균을 구하고 싶습니다.
+이를 클래쓰를 이용하여 구현하세요
+(클래쓰명은 class Student)
+int kor , int eng, int math, int total 까지 사용
+총점을 구하는 함수를 getTotal();
+평균을 구하는 함수는 getAverage();
+성적을 입력하는 함수
+성적을 출력하는 함수
+
+public class{
+
+  private int kor, int eng, int math, int total 설정
+
+  public getTotal
