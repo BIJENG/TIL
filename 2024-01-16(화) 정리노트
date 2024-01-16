@@ -1,0 +1,30 @@
+class 는 한마디로 말하면 "Data-Type" 이다.
+
+자료구조를 자바에선 필드(field) 함수를 메서드(method)
+
+class를 만드는 순서
+1) 묶음 - ex) class XX
+2) 관련된 자료구조 - ex) int kor, int eng, int total 등등
+3) 관련된 함수 - ex) public setScore(){} , public getTotal(){}; 
+4) 액세스 컨트롤, 모디파이어 - ex) public, private, setter, getter
+5) 생성자(constuctor) = 객체를 생성할때 호출되는 함수 주로 객체의 초기화를 수행
+6) Method 구현
+
+-----------------------------------------------------------------------------
+
+문제풀이
+
+로또 프로그램을 구현했습니다.
+- 로또 저장 자료구조
+- 로또 번호 생성
+- 중복 제거
+- 버블 소트 
+이것을 class로 만들어서 구현해봅시다
+
+1) class Lott 선언
+2) 관련된 자료구조 - 로또번호 int ran, 뽑은 번호를 저장할 int saveRan, int numSort
+3) 관련된 함수 - makeNum, doSort, cutSame(중복한값을 찾아내는 함수)
+4) 접근제어 - 초기쪽은 로또번호와 뽑은번호
+5) Constuctor - public Lotto(){This saveRan = 0}
+
+너무어렵다
