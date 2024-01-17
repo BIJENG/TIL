@@ -1,0 +1,62 @@
+클래쓰를 이용해서 로또 프로그램 만들기
+
+1 클래쓰선언
+2 자료구조를 만들고
+3 함수를 만들고
+4 접근제어(public, private) 설정하고
+5 Constuctor 만들고(클래쓰 다음으로 만드는게 좋다고 한다)
+6 기능구현
+7 리팩토링
+---------------------------------------------------------
+
+초심자는 먼저 메인함수에서
+무엇을 할건지 적어보고 그에 필요한 자료구조를 만들고 함수를 만드는게 우선인거 같다.
+로또 프로그램을 만들때 메인함수에서 주석을 통해 구현하고하는게 먼지 적어보고
+그에 필요한 재료들을 설정한다
+출력값에 로또게임을 몇게임 할건지 물어보고
+스캐너기능으로 입력값을 받고 그 입력값대로 로또 게임 6번을 입력번호대로 출력한다
+ex) 메인함수
+import java.util.Scanner;
+
+public class App 
+{
+    public static void main(String[] args) 
+    {   
+        Lotto3 lotto = new Lotto3();
+
+        System.out.println("원하는 로또 게임의 횟수를 입력하세요 (종료는 0을 입력)");
+    
+        Scanner sc = new Scanner(System.in);
+        int game = sc.nextInt();
+
+        lotto.setCount(game);
+
+        lotto.genNumber();
+
+    
+        if(game == 0)
+        {
+            System.out.println("종료");
+        }
+
+        if(game > 10)
+        {
+            System.out.println("로또 게임은 최대10회까지 가능합니다.");
+        }
+
+        if((game > 0) && (game <= 10))
+        {   
+            for(int i = 0; i < game; i++)
+            {
+                int[] result = lotto.getGame(i);
+                
+                for(int j = 0; j < 6; j++)
+                {
+                    System.out.println(result[j] + " ");
+                }
+
+                System.out.println();
+            }
+        }     
+    }
+}
