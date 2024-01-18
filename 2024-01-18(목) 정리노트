@@ -1,0 +1,59 @@
+Stream
+자바에서 스트림(Stream)은 데이터를 처리하는 연속적인 요소의 시퀀스
+out stream -> System.out 출력
+int stream -> System.in 입력
+
+Standard-in = std in = system.in
+Standard-out = std out = system.out
+
+용이성 - 쉽게 이용하고 사용 할 수 있는 정도
+가용성 - 필요할때 사용가능한 정도
+---------------------------------------------
+
+Global area 
+글로벌 변수(공용) = Static variable 저장
+메소드 - 객체를 통해서 접근하는 메소드
+      - 객체가 없어도되는 메소드 ex) Lotto class에서 int add(int a, int b){return a+b}
+
+
+-------------------------------------------------------------------------------------
+
+문제풀이
+
+원의 넓이와 둘레를 구할 수 있는 Circle class 를 만들고자 합니다.
+1) 원의 둘레를 구할 수 있어야 합니다.
+2) 원의 넓이를 구할 수 있어야 합니다.
+
+public class Circle 
+{
+    int radius;
+    double pi = 3.14;
+
+    public Circle()
+    {
+        radius = 0;
+    }
+    
+    public boolean setRadius(int radius)
+    {
+        if(radius < 0)
+        {
+            return false;
+        }
+
+        this.radius = radius;
+        return true;
+    }
+
+    public double genCircum()
+    {
+        return (radius * 2) * pi;
+    }
+
+    public double genWidth()
+    {
+        return (radius * radius) * pi;
+    }
+
+
+}
