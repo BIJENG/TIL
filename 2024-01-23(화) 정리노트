@@ -1,0 +1,91 @@
+
+호출(CALL)과 실행(EXEC)은 다르다!
+- 상속관련해서 Man이 아닌 BizMan 을 호출하지만
+실행은 부모인 Man의 constuctor부터 실행
+
+UML(Unified Modeling Language) 통합모델링언어
+-------------------------------------------------
+
+Stack
+Abstract(추상적)
+Data-Type(데이터타입)
+스택은 후입선출구조(Last in,First out) = LIFO
+A, B, C , D 순으로 들어왔으면 D, C, B, A 순으로 나감
+
+stack overflow = "sp 가 스택사이즈와 같은경우
+-스택에 데이터가 꽉찬 상태
+
+stack underflow = "sp 가 0인 경우
+-스택이 빈상태
+
+Stack class 만들기연습
+
+class Stack{
+
+    private int[] stack;
+    private int stackPointer;
+    private int size;
+
+    public Stack()
+    {
+        size = 10;
+        stack = new int[size];
+        stackPointer = 0;
+    }
+
+    public Stack(int size)
+    {
+        this.size = size;
+        stack = new int[size];
+        stackPointer = 0;
+    }
+
+    public void setSize(int num)
+    {
+        this.size = num;
+        stack = new int[size];
+        stackPointer = 0;
+    }
+
+    public int getSize()
+    {
+        return this.size;
+    }
+
+    public void putIn(int num)
+    {
+        if(stackPointer < size)
+        {
+            stack[stackPointer] = num;
+            stackPointer++;
+        }
+        
+    }
+
+    public void popUp()
+    {
+        if(stackPointer > 0)
+        {
+            if(stack[stackPointer - 1] != 0)
+            {
+                stack[stackPointer - 1] = 0;
+                stackPointer--;
+            }
+        }
+
+        else
+        {
+            System.out.println("팝업할 데이터가 없습니다.");
+        }
+        
+    }
+
+    public void printStack()
+    {
+        for(int i = 0; i < stackPointer; i++)
+        {
+            System.out.println(stack[i]);
+        }
+    }
+
+}
