@@ -1,0 +1,88 @@
+
+Queue(큐)
+
+선입선출구조(First in, First out) = FIFO
+- 가장 먼저 삽입된 항목이 가장 먼저 제거되는 구조
+
+Enqueue(인큐): 큐에 데이터를 추가하는 작업을 말한다. 이 작업은 큐의 뒤쪽에 새로운 요소를 추가
+
+Dequeue(디큐): 큐에서 데이터를 제거하는 작업을 말한다. 이 작업은 큐의 앞쪽에서 가장 먼저 추가된 요소를 제거
+
+Front(프론트): 큐의 가장 앞쪽에 있는 요소를 참조. 이는 다음에 제거될 요소를 나타냄
+
+Rear(리어 또는 백): 큐의 가장 뒤쪽에 있는 요소를 참조. 이는 가장 최근에 추가된 요소를 나타냄
+
+-------------------------------------------------------------------------------------------------------
+
+Queue class 만들기
+
+
+class Queue{
+    public static final int DEFAULT_QUEUE_SIZE = 10;
+    public static final int ERROR = Integer.MIN_VALUE;
+
+    private int rear;
+    private int front;
+    private int[] queue;
+    private int count;
+    
+
+    public Queue()
+    {
+        queue = new int[DEFAULT_QUEUE_SIZE];    // 기본 생성자 값 10으로 지정
+        rear = 0;
+        front = 0;
+        count = 0;
+    }
+
+    public Queue(int queueSize)     // 큐사이즈를 받았을때 오버로딩생성자
+    {
+        queue = new int[queueSize];
+        rear = 0;
+        front = 0;
+        count = 0;
+    }
+
+    public boolean push(int item) 
+    {
+        if(count < queue.length)     // 리어가 큐의길이보다 작다면 풀인상태가 아니므로 값을 집어넣고 같으면 풀인상태! 
+        {
+            queue[rear] = item;
+            rear = (rear + 1) % queue.length;
+            count++;
+            return true;
+        } 
+        else 
+        {
+            return false;
+        }
+    }
+    
+    public int pop()
+    {
+        if(count > 0) 
+        {
+            int reValue = queue[front];
+            queue[front] = 0;
+            front = (front + 1) % queue.length;
+            count--;
+            return reValue;
+        } 
+        else 
+        {
+            return ERROR;
+        }
+    }
+
+    
+
+    public void printQueue()
+    {
+        for(int i = 0; i < queue.length; i++)
+        {
+            System.out.println(queue[i]);
+        }
+    }
+
+
+ 
