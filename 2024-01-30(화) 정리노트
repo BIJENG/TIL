@@ -1,0 +1,166 @@
+Node class
+
+ListContainer class
+
+구현해보기
+
+public class ListContainer {
+    public int count;       // Node의 개수
+    public Node head;       // Node 구조의 시작
+
+    public ListContainer()
+    {
+        count = 0;
+        head = null;
+    }
+
+    public boolean insertNode(int item)
+    {
+        Node newNode = new Node(item);
+        return  insertNode(newNode);
+        
+    }
+    
+    public boolean insertNode(Node newNode)
+    {
+        Node lastNode = head;
+
+        if (count == 0) {
+            head = newNode;
+        }
+        else {
+            for (int i = 0; i < count - 1; i++)
+            {
+                lastNode = lastNode.next;
+            }
+
+            lastNode.next = newNode;
+        }
+
+        count++;
+        return true;
+    }
+
+    public boolean insertNode(int item, int index)
+    {
+        Node newNode = new Node(item);
+        return  insertNode(newNode, index);
+        
+    }
+
+    public boolean insertNode(Node newNode, int index)
+    {
+        Node targetNode = head;
+
+        if ((index > count) || (index < 0)) {
+            return false;
+        }
+
+        if (count == 0)
+        {
+            head = newNode;
+            
+        }
+        else
+        {
+            if (index == 0)
+            {
+                newNode.next = head;
+                head = newNode;
+            }
+            else
+            {
+                // 집어넣을 위치를 찾는다.
+                for (int i = 0; i < index - 1; i++)
+                {
+                    targetNode = targetNode.next;
+                }
+
+                newNode.next = targetNode.next;
+                targetNode.next = newNode;
+            }
+                        
+        }
+       
+        count++;
+        return true;
+    }
+
+    public boolean deleteNodebyItem(int item)
+    {   
+        Node targetNode = head;
+        int itemIndex = -1;
+
+        // 해당 아이템의 위치를 찾는다.
+        for (int i = 0; i < count; i++)
+        {
+            if (targetNode.item == item)
+            {
+                itemIndex = i;
+                break;
+            }
+
+            targetNode = targetNode.next;
+
+        }
+
+        if (itemIndex == -1) {
+            return false;
+        }
+        
+        // 그 위치의 노드를 지운다.
+        return deleteNodebyIndex(itemIndex);
+
+    }
+
+    public boolean deleteNodebyIndex(int index)
+    {
+        Node targetNode = head;
+        Node prevNode = null;
+
+        if ((index >= count) || (index < 0)) {
+            return false;
+        }
+
+        if (index == 0)
+        {
+            head = targetNode.next;
+        }
+        else
+        {
+            for (int i = 0; i < index; i++)
+            {
+                prevNode = targetNode;
+                targetNode = targetNode.next;
+            }
+
+            prevNode.next = targetNode.next;
+
+        }
+
+        count--;
+        return true;
+    }
+
+    public boolean deleteAllNodebyitem(int item)
+    {
+        Node targetNode = head;
+
+        while (targetNode != null)
+        {
+            if (targetNode.item == item)
+            {
+                deleteNodebyItem(item);
+                targetNode = head;
+                continue;
+            }
+
+            targetNode = targetNode.next;
+        }
+
+      
+        return true;
+    }
+    
+
+}
