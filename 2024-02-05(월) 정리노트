@@ -1,0 +1,50 @@
+ 예외처리 복습
+
+ try
+ { 에외발생코드 
+   코드의 기능수준을 논리적 범위로 한정시킴 
+ }
+
+ catch(여외변수명 e)
+ {
+   여러개가 될 수 있고 우선순위를 둘 수 있다.
+   JVM의 예외정보의 참조값이 들어감
+ }
+
+1) try - catch - finally
+2) try with resources  ex) try(resources)
+3) user - define exception
+
+----------------------------------------------------------
+
+equals 구문 연습
+
+@Override
+    public boolean equals(Object obj)
+    {
+        if(obj instanceof Point)
+        {
+            Point p = (Point)obj;
+
+            if((this.x == p.x) && (this.y == p.y))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+equals() 메서드는 자바에서 객체 간의 동등성을 비교하기 위해 사용된다.
+
+일반적으로 두 객체가 동일한지를 판별하는데 사용됨. 기본적으로 equals() 메서드는 두 객체의 메모리 주소가 동일한지를 비교하지만, 이를 오버라이딩하여 객체의 내부 상태를 기반으로 동등성을 판단할 수 있다.
+
+이 클래스에서 equals() 메서드가 재정의되어 두 Point 객체가 동일한 좌표를 가지면 true를 반환하도록 구현되어 있다. 따라서 두 Point 객체의 x와 y 좌표가 동일한 경우에만 true를 반환하고, 그 외의 경우에는 false를 반환.
+
+equals() 메서드를 구현하는 것은 두 객체의 동등성을 비교하고 정확한 비교 로직을 정의하는데 유용하다. 예를 들어, 두 점이 동일한 위치에 있는지를 판별하는 등의 상황에서 유용하게 활용될 수 있다.
+
+obj instanceof Point - obj 가 Point에 인스턴스이면 true를 반환하고 아니면 false를 반환한다.
+
+Point p = (Point)obj; - obj는 자바 모든 객체의 상위인 Object의 참조변수로 모든 클래스의 객체를 참조 할 수 있다.
+형변환을 할때는 반드시 예외처리를 해주는게 중요하다.
+여기서는 if(obj instanceof Point) 구문으로 형변환이 안전한지 확인한 뒤 사용하였다.
