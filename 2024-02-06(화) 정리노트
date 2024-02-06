@@ -1,0 +1,37 @@
+템플릿 클래스(template class)
+generic < >
+
+public class Box<T>{
+}
+Box클래스 아님 Box<T> 클래스인거임
+<T> 타입파라미터, 템플릿 파라미터라고도함
+T 자리에는 Primitive-Type 은 올 수 없음 ex) <int> x  --> <Integer> o
+
+Wrapper class
+Primitive-Type 의 기능을 하는 클래스
+
+Integer: int 타입의 값을 감싸는 클래스
+Double: double 타입의 값을 감싸는 클래스
+Boolean: boolean 타입의 값을 감싸는 클래스
+Character: char 타입의 값을 감싸는 클래스
+
+public class Box<T, R> 타입파라메터를 여러개해도 가능하다.
+
+제네릭(Generic)을 쓰는 이유
+"연산은 같다" 하지만 데이터타입이 계속 바뀜
+-> 코드가 많아짐 ex) AppleBox, OrangeBox
+하는건 똑같은데 데이터타입만 계속 바뀐다면 템플릿을 사용
+-> 코드가 일정해짐
+
+쓰는방법
+1) class : Generic class ex) AppleBox, OrangeBox => Box<T>
+2) Method : Generic Method
+
+Data-Type 제한
+실질적인 활용도를 높임 (제한이 없으면 아무나 다 가능 -> 쓸모가 없음)
+제한은 상속구조와 인터페이스로 할 수 있음
+ex) public class Box<T extends Number)
+    public interface<T extends Number)  --> 인터페이스도 extends를 사용한다.
+
+    public static <T> void openBox(T box) --> 대부분 static 을 쓰고 제네릭타입을 쓰겠다고 선언후 씀
+    
