@@ -1,0 +1,61 @@
+리스트나 더블링크드리스트 모두 자바내에 있는 클래스들이다.
+
+제네릭을 이용해서 리스트를 만들어보고 여러방법으로 출력하는 연습
+
+public class App {
+    public static void main(String[] args) throws Exception {
+        
+        List<Double> list = new LinkedList<>();
+
+        list.add(1.11);
+        list.add(2.22);
+        list.add(3.33);
+        list.add(4.44);
+        list.add(5.55);
+
+        //일반 for문
+        for(int i = 0; i < list.size(); i++)
+        {
+            System.out.println(list.get(i));
+        }
+
+        System.out.println("---------------------");
+
+        //enhanced for
+        for(Double dou : list)
+        {
+            System.out.println(dou);
+        }
+
+        System.out.println("---------------------");
+
+
+        //iterator
+        Iterator<Double> iter = list.iterator();
+
+        while (iter.hasNext()) 
+        {
+            System.out.println(iter.next());    
+        }
+        
+        System.out.println("---------------------");
+
+
+        List<Number> list2 = new LinkedList<>();
+
+        list2.add(1);
+        list2.add(2.2);
+        list2.add(-3);
+        list2.add(4.5);
+        list2.add(-5);
+
+        
+
+        Iterator<Number> iter2 = list2.iterator();
+
+        while (iter2.hasNext()) 
+        {
+            System.out.println(iter2.next());    
+        }
+    }
+}
