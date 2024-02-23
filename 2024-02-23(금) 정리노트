@@ -1,0 +1,11 @@
+const func = function() {}
+-> const func = 참조값
+
+즉시 호출 함수 표현(IIFE, Immediately Invoked Function Expression) 
+함수를 정의하고 즉시 호출하는 패턴을 말한다. 
+이 패턴은 함수를 선언하자마자 실행하고자 할 때 사용된다. 
+주로 함수 스코프를 생성하여 변수를 보호하거나 전역 네임스페이스 오염을 방지하기 위해 사용된다.
+ex)
+(function(){})();   ---> function 생략
+((){})();           --->  => 를 써서도 가능하다.
+(() => {})();
