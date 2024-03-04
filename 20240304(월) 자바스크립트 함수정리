@@ -1,0 +1,150 @@
+DOM(Document Object Model)
+HTML, XHTML 또는 XML 문서의 프로그래밍적인 표현을 제공하는 인터페이스이다. 
+이 모델은 문서의 구조화된 표현을 제공하며, 프로그래밍 언어가 문서 구조, 스타일 및 내용을 동적으로 변경하고 조작할 수 있도록 한다.
+DOM은 일종의 트리 구조로, 각 요소는 객체로 표현된다. HTML의 경우, 요소는 태그와 그 속성을 포함하며, 각각의 요소는 문서 트리에서 부모, 자식, 형제 등의 관계를 가진다.
+JavaScript와 같은 클라이언트 측 스크립트 언어를 사용하여 DOM을 조작할 수 있다. 예를 들어, JavaScript를 사용하여 특정 요소를 찾거나 추가, 제거, 변경하는 등의 작업을 수행할 수 있다.
+DOM은 웹 페이지의 동적인 기능을 구현하는 데 매우 중요하다. 웹 페이지의 내용이나 스타일을 사용자 상호작용에 따라 동적으로 변경하거나, 서버로부터 받은 데이터를 페이지에 동적으로 추가하는 등의 작업을 수행할 때 DOM이 사용된다.
+
+---------------------------------------------------------------------------
+1
+Document.querySelector()	
+제공한 선택자 또는 선택자 뭉치와 일치하는 문서 내 첫 번째 Element (en-US) 를 반환한다. 
+일치하는 요소가 없으면 null반환한다.
+ex)
+const element = document.querySelector(selectors);
+
+2
+addEventListener()
+JavaScript에서 이벤트를 처리하기 위해 사용되는 메서드이다. 
+이 메서드를 사용하여 DOM 요소에 이벤트 리스너를 추가할 수 있다. 
+이벤트 리스너는 특정 이벤트가 발생했을 때 실행되는 함수
+ex)
+element.addEventListener(event, listener[, options]);
+
+element: 이벤트를 수신하려는 DOM 요소
+event: 이벤트의 유형을 나타내는 문자열 예를 들어, "click", "mouseover", "keydown" 등이 있다.
+listener: 이벤트가 발생했을 때 호출되는 함수 또는 이벤트 핸들러
+options (선택사항): 옵션 객체를 나타내며, 이벤트에 대한 옵션을 지정할 수 있다. 일반적으로는 이벤트 버블링 및 캡처링과 관련된 옵션을 지정한다.
+
+3
+classList	
+요소 속성 의 라이브 컬렉션을 Element.classList반환하는 읽기 전용 속성이다 
+그런 다음 클래스 목록을 조작하는 데 사용할 수 있다. DOMTokenListclass
+ex)
+add(class1, class2, ...): 하나 이상의 클래스를 요소에 추가
+remove(class1, class2, ...): 하나 이상의 클래스를 요소에서 제거
+toggle(class, force): 클래스를 토글한다. 클래스가 요소에 있으면 제거하고 없으면 추가한다. 선택적으로, force 매개변수를 사용하여 특정 상태를 지정할 수 있다.
+contains(class): 특정 클래스가 요소에 있는지 여부를 확인한다. 있으면 true를, 없으면 false를 반환. 
+
+const element = document.getElementById('myDiv');
+
+// 클래스 추가
+element.classList.add('red');
+
+// 클래스 제거
+element.classList.remove('box');
+
+// 클래스 토글
+element.classList.toggle('blue');"
+
+4
+contains()
+주어진 인자가 node 의 자손인지, 아닌지에 대한 Boolean 값을 리턴한다.
+ex)
+node.contains(otherNode);
+
+5
+replace()	
+classList 객체의 메서드 중 하나로, DOM 요소의 클래스 목록에서 특정 클래스를 다른 클래스로 교체하는 데 사용된다.	
+ex)
+element.classList.replace(바꾸고싶은 클래스, 바뀔 클래스);
+
+6
+setTimeout()	
+일정 시간이 지난 후에 특정 함수를 실행하는 JavaScript의 내장 함수이다. 
+이 함수를 사용하면 일정한 지연 시간 이후에 특정 작업을 실행할 수 있다.	
+ex)
+setTimeout(callbackFunction, delay, arg1, arg2, ...);
+
+setTimeout(function() {
+    console.log(""Hello, world!"");
+}, 3000);"
+
+7
+clearTimeout()
+setTimeout() 함수로 설정된 타이머를 취소하는 데 사용된다. 즉, 타이머가 실행되기 전에 clearTimeout()을 호출하여 해당 타이머를 제거할 수 있다.
+ex)
+clearTimeout(timerId);
+
+// 타이머 설정
+const timerId = setTimeout(function() {
+    console.log(""타이머가 실행되었습니다."");
+}, 3000); // 3초 후에 실행
+
+// 타이머 취소
+clearTimeout(timerId);"
+
+8
+reduce()	
+배열의 각 요소에 대해 주어진 콜백 함수를 실행하고 하나의 결과값을 반환하는 JavaScript의 배열 메서드이다. 
+이 메서드를 사용하면 배열을 단일 값으로 축소하거나 변환할 수 있다.	
+ex)
+array.reduce(callbackFunction, initialValue);
+
+const numbers = [1, 2, 3, 4, 5];
+const sum = numbers.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+console.log(sum); // 출력: 15
+
+9
+slice()	
+배열의 일부분을 추출하여 새로운 배열을 반환하는 JavaScript의 배열 메서드이다. 
+이 메서드를 사용하여 기존 배열을 수정하지 않고 원하는 부분을 추출할 수 있다.	
+ex)
+array.slice(startIndex, endIndex);
+
+const array = [1, 2, 3, 4, 5];
+const slicedArray = array.slice(1, 4);
+console.log(slicedArray); // 출력: [2, 3, 4]
+
+10
+forEach()
+JavaScript의 배열 메서드 중 하나로, 배열의 각 요소에 대해 주어진 함수를 실행한다. 
+이 메서드는 주로 반복문의 역할을 하며, 배열의 모든 요소에 대해 반복 작업을 수행할 때 사용된다.
+ex)
+array.forEach(callbackFunction(currentValue, index, array), thisArg);
+
+const array = [1, 2, 3, 4, 5];
+
+array.forEach(function(element) {
+    console.log(element);
+});
+
+11
+append()
+JavaScript에서 DOM 요소에 새로운 자식 요소를 추가하는 메서드다. 
+이 메서드를 사용하면 DOM 요소의 끝에 새로운 자식 요소를 추가할 수 있다.
+ex)
+parentElement.append(childElement1, childElement2, ...);
+
+// 부모 요소 선택
+const parentElement = document.getElementById('parent');
+
+// 새로운 자식 요소 생성
+const newDiv = document.createElement('div');
+newDiv.textContent = '새로운 div 요소';
+
+// 부모 요소에 새로운 자식 요소 추가
+parentElement.append(newDiv);
+
+
+
+
+
+
+
+
+
+
+
+
+
