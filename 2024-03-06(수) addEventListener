@@ -1,0 +1,68 @@
+<style>
+        body {
+            width: 100%;
+            height: 3000px;
+        }
+
+        .section0 {
+            width: 100%;
+            position: fixed;
+            top: 150px;
+            
+
+        }
+
+        p {
+            font-size: 2em;
+            font-weight: bold;
+            text-align: center;
+            opacity: 1;
+
+        }
+
+
+    </style>
+
+</head>
+<body>
+    <div class="section0">
+        <p id="section-product">오늘도 빛나는 너에게~~</p>
+        <button class="opacity-up">opacity up</button>
+        <button class="opacity-down">opacity down</button>
+    </div>
+
+    <script>
+        const $opacityFont = document.querySelector('#section-product');
+        const $opaUp = document.querySelector('.opacity-up');
+        const $opaDown = document.querySelector('.opacity-down');
+        let opacityValue = 1;
+        let maxScroll = 3000 - window.innerHeight;
+
+        $opaUp.addEventListener('click', ()=>{
+
+            opacityValue = opacityValue - 0.1;
+            $opacityFont.style.opacity = opacityValue 
+        });
+
+        $opaDown.addEventListener('click', ()=>{
+
+            opacityValue = opacityValue + 0.1;
+            $opacityFont.style.opacity = opacityValue
+        })
+
+        window.addEventListener('scroll', () => {
+            const startScroll = 0.3 * maxScroll; // 시작할 스크롤 위치 (30%)
+            const endScroll = 0.5 * maxScroll;   // 최종 스크롤 위치 (50%)
+
+            if (window.scrollY >= startScroll && window.scrollY <= endScroll) {
+                // 시작 위치와 최종 위치 사이에 있을 때 투명도를 서서히 증가시킴
+                const opacity = (window.scrollY - startScroll) / (endScroll - startScroll);
+                $opacityFont.style.opacity = opacity;
+            } else if (window.scrollY > endScroll) {
+                // 최종 위치를 넘어섰을 때 투명도를 1로 설정
+                $opacityFont.style.opacity = 1;
+            } else {
+                // 시작 위치를 아직 도달하지 않았을 때 투명도를 유지하거나 초기화
+                // 여기서는 아무것도 하지 않음
+            }
+        });
