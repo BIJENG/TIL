@@ -1,0 +1,208 @@
+<script>
+
+    const getCssValue = function(scrollStart,  // 스크롤 시작 위치(비율)
+                                      scrollEnd,    // 스크롤 종료 위치(비율)
+                                      cssStart,     // css 시작값
+                                      cssEnd)        // css 끝값
+    {
+        let height = gHeight;
+        let yOffset = gYOffset;
+
+        let partStart = scrollStart * height;
+        let partEnd = scrollEnd * height;
+        let partHeight = partEnd - partStart;
+        let rate = 0;
+        let cssValue = 0;
+
+        let cssRange = cssEnd - cssStart;
+
+        if ((yOffset >= partStart) && (yOffset <= partEnd))
+        {
+            rate = (yOffset - partStart)/ partHeight
+            
+            cssValue = (cssRange * rate) + cssStart;
+        }
+        else if (yOffset < partStart)
+        {
+            cssValue = cssStart;
+        }
+        else if (yOffset > partEnd)
+        {
+            cssValue = cssEnd;
+        }
+
+        return cssValue;
+
+    }
+
+    // 애니메이션 처리를 하는 함수.
+    const playAnimation = function()
+    {
+        let scrollRate = gYOffset / gHeight;
+        let opValue = 0;
+
+        $messageA.style.opacity = 0;
+        $messageB.style.opacity = 0;
+        $messageC.style.opacity = 0;
+        $messageD.style.opacity = 0;
+        
+        if ((scrollRate >=0.15) && (scrollRate <=0.25))
+        {            
+            opValue = getCssValue(0.15, 0.25, 0, 1);
+            $messageA.style.opacity = opValue;
+        }
+        else if ((scrollRate > 0.25) && (scrollRate <= 0.35))
+        {
+            opValue = getCssValue(0.25, 0.35, 1, 0);
+            $messageA.style.opacity = opValue;
+        }
+        else if ((scrollRate > 0.35) && (scrollRate <= 0.45))
+        {
+            opValue = getCssValue(0.35, 0.45, 0, 1);
+            $messageB.style.opacity = opValue;
+            
+        }
+        else if ((scrollRate > 0.45) && (scrollRate <= 0.55))
+        {
+            opValue = getCssValue(0.45, 0.55, 1, 0);
+            $messageB.style.opacity = opValue;
+
+        }
+        else if ((scrollRate > 0.55) && (scrollRate <= 0.65))
+        {
+            opValue = getCssValue(0.55, 0.65, 0, 1);
+            $messageC.style.opacity = opValue;
+
+        }
+        else if ((scrollRate > 0.65) && (scrollRate <= 0.75))
+        {
+            opValue = getCssValue(0.65, 0.75, 1, 0);
+            $messageC.style.opacity = opValue;
+        }
+        else if ((scrollRate > 0.75) && (scrollRate <= 0.85))
+        {
+            opValue = getCssValue(0.75, 0.85, 0, 1);
+            $messageD.style.opacity = opValue;
+            
+        }
+        else if ((scrollRate > 0.85) && (scrollRate <= 0.95))
+        {
+            opValue = getCssValue(0.85, 0.95, 1, 0);
+            $messageD.style.opacity = opValue;
+            
+        }
+        else
+        {
+            $messageA.style.opacity = 0;
+            $messageB.style.opacity = 0;
+            $messageC.style.opacity = 0;
+            $messageD.style.opacity = 0;
+        
+        }
+    }
+
+    const getTransValue = function(scrollStart,  // 스크롤 시작 위치(비율)
+                                      scrollEnd,    // 스크롤 종료 위치(비율)
+                                      cssStart,     // trans 시작값
+                                      cssEnd)        // trans 끝값
+    {
+        let height = gHeight;
+        let yOffset = gYOffset;
+
+        let transStart = scrollStart * height;
+        let transEnd = scrollEnd * height;
+        let transHeight = transEnd - transStart;
+        let rate = 0;
+        let cssValue = 0;
+
+        let cssRange = cssEnd - cssStart;
+
+        if ((yOffset >= transStart) && (yOffset <= transEnd))
+        {
+            rate = (yOffset - transStart)/ transHeight
+            
+            cssValue = (cssRange * rate) + cssStart;
+        }
+        else if (yOffset < transStart)
+        {
+            cssValue = cssStart;
+        }
+        else if (yOffset > transEnd)
+        {
+            cssValue = cssEnd;
+        }
+
+        return cssValue;
+
+    }
+
+    const playTranslate = function() {
+
+        let height = gHeight;
+        let yOffset = gYOffset;
+
+        let scrollRate = yOffset / height;
+        let tranValue = 0;
+
+        if ((scrollRate >=0.15) && (scrollRate <=0.35))
+        {            
+            tranValue = getTransValue(0.15, 0.35, 0, -100);
+            $messageA.style.transform = `translateY(${tranValue}%)`;    
+        }
+
+        else if((scrollRate >=0.35) && (scrollRate <= 0.55))
+        {
+            tranValue = getTransValue(0.35, 0.55, 0, -100);
+            $messageB.style.transform = `translateY(${tranValue}%)`; 
+        }
+
+        else if((scrollRate >=0.55) && (scrollRate <= 0.75))
+        {
+            tranValue = getTransValue(0.55, 0.75, 0, -100);
+            $messageC.style.transform = `translateY(${tranValue}%)`; 
+        }
+
+        else if((scrollRate >=0.75) && (scrollRate <= 0.95))
+        {
+            tranValue = getTransValue(0.75, 0.95, 0, -100);
+            $messageD.style.transform = `translateY(${tranValue}%)`; 
+        }
+        
+    }
+
+    // const testTrans = function (startRate, endRate, cssStart, cssEnd) {
+
+    //     let height = 3000 - window.innerHeight;
+    //     let scrollPosition = window.scrollY;
+
+    //     let start = 
+    // }
+
+    ///////////////////////////////////////////////////////////////
+    // 이벤트 핸들러
+
+    window.addEventListener('scroll', ()=>{       
+        
+        gYOffset = window.scrollY;
+        
+        playAnimation();
+
+        playTranslate();
+        
+    });
+
+
+
+    ///////////////////////////////////////////////////////////////
+    // 실행부
+   
+    let gHeight = 3000 - window.innerHeight;    // 스크롤의 높이.
+    let gYOffset = 0;                           // 현재 스크롤 위치.
+
+    $messageA = document.querySelector('.message.a');
+    $messageB = document.querySelector('.message.b');
+    $messageC = document.querySelector('.message.c');
+    $messageD = document.querySelector('.message.d');
+    
+
+</script>
