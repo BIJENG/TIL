@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="reset.css">
+
+    <style>
+        body {
+            margin: 0;
+            height: 3000px;
+        }
+
+        .font-section {
+            width: 100%;
+            top: 200px;
+            position: relative;
+            text-align: center;
+        }
+
+        .section {
+            position: fixed;
+            width: 100%;
+            font-size: 2rem;
+            font-weight: bold;
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="font-section">
+        <p class="section a">가나다라</p>
+        <p class="section b">마바사아</p>
+        <p class="section c">자차카</p>
+        <p class="section d">타파하</p>
+    </div>
+
+    <script>
+
+        const $fontA = document.querySelector('.section.a');
+        const $fontB= document.querySelector('.section.b');
+        const $fontC = document.querySelector('.section.c');
+        const $fontD = document.querySelector('.section.d');
+
+        const getRateValue = (startRate, endRate, startCssVal, endCssVal) => {
+
+            let scrollHeight = document.body.scrollHeight - window.innerHeight;
+            let scrollPosition = window.scrollY;
+
+            let height = scrollHeight;
+            let ySet = scrollPosition;
+
+            let startVal = startRate * height;
+            let endVal = endRate * height;
+            let length = endVal - startVal;
+            let cssVal = 0;
+            let rate = 0;
+            
+            if((ySet >= startVal) && (ySet <= endVal))
+            {
+                rate = (ySet - startVal) / length;
+        
+                cssVal = startCssVal + (endCssVal - startCssVal) * rate;
+            }
+
+            else if(ySet < startVal)
+            {
+                cssVal = startCssVal;
+            }
+
+            else if(ySet > endVal)
+            {
+                cssVal = endCssVal;
+            }
+
+            return cssVal;
+
+        }
+
+        const playAnimation = function() {
+            let scrollHeight = document.body.scrollHeight - window.innerHeight;
+            let scrollPosition = window.scrollY;
+
+            let scrollRate = scrollPosition / scrollHeight;
+            let opValue = 0;
+
+            $fontA.style.opacity = 0;
+            $fontB.style.opacity = 0;
+            $fontC.style.opacity = 0;
+            $fontD.style.opacity = 0;
+            
+            if ((scrollRate >=0.15) && (scrollRate <=0.25))
+            {            
+                opValue = getRateValue(0.15, 0.25, 0, 1);
+                $fontA.style.opacity = opValue;
+            }
+            else if ((scrollRate > 0.25) && (scrollRate <= 0.35))
+            {
+                opValue = getRateValue(0.25, 0.35, 1, 0);
+                $fontA.style.opacity = opValue;
+            }
+            else if ((scrollRate > 0.35) && (scrollRate <= 0.45))
+            {
+                opValue = getRateValue(0.35, 0.45, 0, 1);
+                $fontB.style.opacity = opValue;
+                
+            }
+            else if ((scrollRate > 0.45) && (scrollRate <= 0.55))
+            {
+                opValue = getRateValue(0.45, 0.55, 1, 0);
+                $fontB.style.opacity = opValue;
+
+            }
+            else if ((scrollRate > 0.55) && (scrollRate <= 0.65))
+            {
+                opValue = getRateValue(0.55, 0.65, 0, 1);
+                $fontC.style.opacity = opValue;
+
+            }
+            else if ((scrollRate > 0.65) && (scrollRate <= 0.75))
+            {
+                opValue = getRateValue(0.65, 0.75, 1, 0);
+                $fontC.style.opacity = opValue;
+            }
+            else if ((scrollRate > 0.75) && (scrollRate <= 0.85))
+            {
+                opValue = getRateValue(0.75, 0.85, 0, 1);
+                $fontD.style.opacity = opValue;
+                
+            }
+            else if ((scrollRate > 0.85) && (scrollRate <= 0.95))
+            {
+                opValue = getRateValue(0.85, 0.95, 1, 0);
+                $fontD.style.opacity = opValue;
+                
+            }
+            else
+            {
+                $fontA.style.opacity = 0;
+                $fontB.style.opacity = 0;
+                $fontC.style.opacity = 0;
+                $fontD.style.opacity = 0;
+            
+            }
+        }
+
+        window.addEventListener('scroll', ()=>{
+
+            playAnimation();
+
+        })
+
+    </script>
+    
+</body>
+</html>
