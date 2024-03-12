@@ -1,0 +1,134 @@
+script 부분 짜기 (미완)
+
+섹션0 과 섹션1을 구분하고 스크롤이 그 구역을 지날경우에만 애니메이션효과가 발동하게 만드려고한다.
+필요한 변수배열과 함수들
+
+(()=>{
+
+    const setLocalMenu = function()
+    {
+        if(yOffset <= 44)
+        {
+            document.body.classList.remove('local-nav-sticky');
+        }
+
+        else
+        {
+            document.body.classList.add('local-nav-sticky');
+        }
+    }
+
+    const getBodyID = function(section) {
+        document.body.setAttribute('id',`show-section${section}`);
+    }
+
+    const getPrevSectionHeight = function() {
+        let retVal = 0
+
+        for(let i = 0; i < CurrentSection; i++)
+        {
+            retVal = retVal + sectionSet[i].height;
+        }
+
+        return retVal;
+
+    }
+
+    const getCurrentSection = function() {
+
+        let retVal = 0;
+
+        if(yOffset <= sectionSet[0].height)
+        {
+            retVal = 0
+        }
+
+        else
+        {
+            retVal = 1;
+        }
+    }
+
+
+    const setLayout = function() {
+
+        if(window.innerHeight < 500)
+        {
+            sectionSet[0].height = 3000;
+            sectionSet[1].height = 500;
+
+            sectionSet[0].objs.container.style.height = `${sectionSet[0].height}px`
+            sectionSet[1].objs.container.style.height = `${sectionSet[1].height}px`
+        }
+
+        else
+        {
+            for(let i = 0; i < sectionSet.length; i++)
+            {
+                sectionSet[i].height = window.innerHeight * sectionSet[i].multiple;
+                sectionSet[i].objs.container.style.height = `${sectionSet[i].height}px`
+                
+            }
+        }
+    }
+
+    let yOffset = 0;
+    let sectionYOffset = 0;
+    let CurrentSection = 0;
+
+    const sectionSet = [
+        {
+            height : 0,
+            multiple : 5,
+            objs : {
+                container : document.querySelector('#section-0'),
+                messageA : document.querySelector('.section0-message.a'),
+                messageB : document.querySelector('.section0-message.b'),
+                messageC : document.querySelector('.section0-message.c'),
+                messageD : document.querySelector('.section0-message.d'),
+                canvas : document.querySelector('#main-canvas'),
+                context : document.querySelector('#main-canvas').getContext('2d'),
+                images : [],
+            },
+
+            vals : {
+                imageCount : 500,
+            }
+        },
+
+        {
+            height : 0,
+            multiple : 5,
+            objs : {
+
+            },
+
+            vals : {
+
+            }
+        }
+    ]
+
+    window.addEventListener('scroll', ()=>{
+        yOffset = window.scrollY;
+
+        CurrentSection = getCurrentSection();
+
+        sectionYOffset = yOffset - getPrevSectionHeight();
+
+        getBodyID();
+
+        setLocalMenu()
+
+
+        
+
+    })
+
+    window.addEventListener('load', ()=>{
+        setLayout();
+
+    })
+
+
+})()
