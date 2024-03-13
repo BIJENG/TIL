@@ -1,0 +1,524 @@
+----------------------------------------- 메인 css -----------------------------------------------
+@charset 'utf-8';
+
+html {
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 14px;
+    color: white;
+}
+
+body {
+    overflow-x: hidden;
+    letter-spacing: -0.05rem;
+    background-color: black;
+    height: 3000px;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+}
+
+footer {
+    position: relative;
+    margin-top: auto;
+
+
+}
+
+.global-nav {
+    position: absolute;
+
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 44px;
+}
+
+.global-nav-links {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    height: 100%;
+    max-width: 1000px;
+
+    margin: 0 auto;
+    
+    /* border: solid red; */
+}
+
+.local-nav {
+    position: absolute;
+
+    left: 0;
+    top: 45px;
+    width: 100%;
+    height: 52px;
+
+    
+
+}
+
+.local-nav-links {
+    display: flex;
+
+    align-items: center;
+    justify-content: right;
+
+    height: 100%;
+    max-width: 1000px;
+
+    margin: 0 auto;
+    border-bottom: 1px solid grey;
+    
+
+}
+
+.local-nav-product-link {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-right: auto;
+}
+
+.local-nav-link {
+    margin-left: 2em;
+}
+
+.product-name {
+    font-size: 7.5rem;
+    text-align: center;
+
+    margin-top: 2em;
+}
+
+.sticky-element {
+    display: none;
+    position: fixed;
+}
+
+.section0-canvas {
+    left: 0;
+    top: 0;
+    width: 100%;
+    z-index: -7;
+    text-align: center;
+    
+}
+
+.section0-message {
+    font-size: 5rem;
+    font-weight: bold;
+
+    left: 0;
+    top: 3.5em;
+    width: 100%;
+    height: 6rem;
+    text-align: center;
+    opacity: 0;
+}
+
+.section1-message {
+    font-size: 2.5rem;
+    max-width: 1000px;
+
+    margin: 0 auto;
+    line-height: 2.5em;
+}
+
+.section1-message strong {
+    font-size: 4.5rem;
+}
+
+.site-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+    height: 4em;
+    background-color: darkgray;
+    color: black;
+}
+
+.scroll-section {
+    
+}
+
+#show-section0 .sticky-element {
+    display: block;
+}
+
+.local-nav-sticky .local-nav {
+    position: fixed;
+
+    left: 0;
+    top: 0;
+
+    border-bottom: 1px solid grey;
+
+    -webkit-backdrop-filter: saturate(180%) blur(15px);
+	-moz-backdrop-filter: saturate(180%) blur(15px);
+	-o-backdrop-filter: saturate(180%) blur(15px);
+	backdrop-filter: saturate(180%) blur(15px);
+
+}
+
+.local-nav-sticky .local-nav-links {
+    border: none;
+}
+
+
+----------------------------------------- 메인 스크립트 -------------------------------------------
+
+  (()=>{
+
+    const setLayout = function() {
+
+        if(window.innerHeight < 500)
+        {
+            //section0 : 3000px,  section1 : 2000px 로 고정
+            sectionSet[0].height = 3000;
+            sectionSet[1].height = 100;
+
+            sectionSet[0].objs.container.style.height = `${sectionSet[0].height}px`
+            sectionSet[1].objs.container.style.height = `${sectionSet[1].height}px`
+            
+        }
+
+        else
+        {
+            for(let i = 0; i < sectionSet.length; i++)
+            {
+                sectionSet[i].height = window.innerHeight * sectionSet[i].multiple;
+                sectionSet[i].objs.container.style.height = `${sectionSet[i].height}px`
+            }
+        }
+        
+    }
+
+    const getCurrentSection = function() {
+    
+        let curSection = 0;
+
+        if(yOffset <= sectionSet[0].height)
+        {
+            curSection = 0;
+        }
+
+        else if((yOffset > sectionSet[0].height) && (yOffset <= (sectionSet[0].height + sectionSet[1].height)))
+        {
+            curSection = 1;
+        }
+
+        return curSection;
+    }
+
+    const setBodyID = function(section) {
+        document.body.setAttribute('id', `show-section${section}`);
+    }
+
+    const setCanvas = function() {
+
+        const imgCount = sectionSet[0].vals.imageCount;
+        const canvasImages = sectionSet[0].objs.canvasImages;
+        let imageElement;
+
+        for(let i = 0; i < imgCount; i++)
+        {
+            imageElement = new Image();
+
+            imageElement.src = `./image/apple_${i}.png`;
+            canvasImages.push(imageElement);
+        }
+
+            imageElement.addEventListener('load', ()=>{
+            sectionSet[0].objs.context.drawImage(canvasImages[0], 0, 0);
+        });
+    }
+
+    const setLocalnavMenu = function() {
+        if(yOffset <= 44)
+        {
+            document.body.classList.remove('local-nav-sticky');
+        }
+        else
+        {
+            document.body.classList.add('local-nav-sticky');
+        }
+    }
+
+    const getPrevSectiongHeight = function() 
+    {
+        let prevHeight = 0;
+
+        for(let i = 0; i < curSection; i++)
+        {
+            prevHeight = prevHeight + sectionSet[i].height;
+        }
+
+        return prevHeight;
+    }
+
+    const getCssValue = function(values) {
+
+        let totalHeight = sectionSet[curSection].height;
+
+        let startScroll = values[2].start * totalHeight;
+        let endScroll = values[2].end * totalHeight;
+        let scrollLength = endScroll - startScroll;
+
+        let retValue = 0;
+        let rate = 0
+
+        if(sectionYOffset < startScroll)
+        {
+            retValue = values[0];
+        }
+        
+        else if(sectionYOffset > endScroll)
+        {
+            retValue = values[1];
+        }
+
+        else
+        {
+            rate = (sectionYOffset - startScroll) / scrollLength;
+            retValue = values[0] + ((values[1] - values[0]) * rate);
+        }
+
+        return retValue;
+    }
+
+    const playAnimation = function() {
+
+        let transValue = 0;
+        let opacityValue = 0;
+        let scrollRate = sectionYOffset / sectionSet[curSection].height
+        let imageSeq = 0;
+
+        switch(curSection)
+        {
+            case 0 :
+
+                sectionSet[0].objs.messageA.style.opacity = 0;
+                sectionSet[0].objs.messageB.style.opacity = 0;
+                sectionSet[0].objs.messageC.style.opacity = 0;
+                sectionSet[0].objs.messageD.style.opacity = 0;
+
+                
+
+                if(scrollRate < 0.145)
+                {   
+                    opacityValue = getCssValue(sectionSet[0].vals.messageA_opacity_in);
+                    sectionSet[0].objs.messageA.style.opacity = opacityValue;
+
+                    transValue = getCssValue(sectionSet[0].vals.messageA_translate1);
+                    sectionSet[0].objs.messageA.style.transform = `translateY(${transValue}px)`
+                }
+                
+                else if((scrollRate >= 0.145) && (scrollRate < 0.245))
+                {
+                    opacityValue = getCssValue(sectionSet[0].vals.messageA_opacity_out);
+                    sectionSet[0].objs.messageA.style.opacity = opacityValue;
+
+                    transValue = getCssValue(sectionSet[0].vals.messageA_translate2)
+                    sectionSet[0].objs.messageA.style.transform = `translateY(${transValue}px)`
+                }
+
+                else if((scrollRate >= 0.245) && (scrollRate < 0.345))
+                {
+                    opacityValue = getCssValue(sectionSet[0].vals.messageB_opacity_in);
+                    sectionSet[0].objs.messageB.style.opacity = opacityValue;
+
+                    transValue = getCssValue(sectionSet[0].vals.messageB_translate1)
+                    sectionSet[0].objs.messageB.style.transform = `translateY(${transValue}px)`
+                }
+
+                else if((scrollRate >= 0.345) && (scrollRate < 0.445))
+                {
+                    opacityValue = getCssValue(sectionSet[0].vals.messageB_opacity_out);
+                    sectionSet[0].objs.messageB.style.opacity = opacityValue;
+
+                    transValue = getCssValue(sectionSet[0].vals.messageB_translate2)
+                    sectionSet[0].objs.messageB.style.transform = `translateY(${transValue}px)`
+                }
+
+                else if((scrollRate >= 0.445) && (scrollRate < 0.545))
+                {
+                    opacityValue = getCssValue(sectionSet[0].vals.messageC_opacity_in);
+                    sectionSet[0].objs.messageC.style.opacity = opacityValue;
+
+                    transValue = getCssValue(sectionSet[0].vals.messageC_translate1)
+                    sectionSet[0].objs.messageC.style.transform = `translateY(${transValue}px)`
+                }
+
+                else if((scrollRate >= 0.545) && (scrollRate < 0.645))
+                {
+                    opacityValue = getCssValue(sectionSet[0].vals.messageC_opacity_out);
+                    sectionSet[0].objs.messageC.style.opacity = opacityValue;
+
+                    transValue = getCssValue(sectionSet[0].vals.messageC_translate2)
+                    sectionSet[0].objs.messageC.style.transform = `translateY(${transValue}px)`
+                }
+
+                else if((scrollRate >= 0.645) && (scrollRate < 0.745))
+                {
+                    opacityValue = getCssValue(sectionSet[0].vals.messageD_opacity_in);
+                    sectionSet[0].objs.messageD.style.opacity = opacityValue;
+
+                    transValue = getCssValue(sectionSet[0].vals.messageD_translate1)
+                    sectionSet[0].objs.messageD.style.transform = `translateY(${transValue}px)`
+                }
+
+                else if((scrollRate >= 0.745) && (scrollRate < 0.845))
+                {
+                    opacityValue = getCssValue(sectionSet[0].vals.messageD_opacity_out);
+                    sectionSet[0].objs.messageD.style.opacity = opacityValue;
+
+                    transValue = getCssValue(sectionSet[0].vals.messageD_translate2)
+                    sectionSet[0].objs.messageD.style.transform = `translateY(${transValue}px)`
+                }
+
+                else
+                {
+                    sectionSet[0].objs.messageA.style.opacity = 0;
+                    sectionSet[0].objs.messageB.style.opacity = 0;
+                    sectionSet[0].objs.messageC.style.opacity = 0;
+                    sectionSet[0].objs.messageD.style.opacity = 0;
+                }
+                
+                if((scrollRate >= 0.795) && (scrollRate <= 0.96))
+                {   
+                    sectionSet[0].objs.canvas.style.opacity = getCssValue(sectionSet[0].vals.canvas_opacity_out);
+                }
+                    imageSeq = Math.floor(getCssValue(sectionSet[0].vals.canvas_image_seq));
+                    sectionSet[0].objs.context.drawImage(sectionSet[0].objs.canvasImages[imageSeq], 0, 0);
+
+                break;
+            
+            case 1 :
+                
+                break;
+        }
+    }
+
+    let yOffset = 0; //스크롤값
+
+    let sectionYOffset = 0; // Section 내의 스크롤값(항상 0 으로 시작)
+    
+    //현재 섹션번호
+    let curSection = 0;
+
+    const sectionSet = [
+        //section-0의 정보
+        { 
+            height : 0, //section-0의 높이
+            multiple : 5, //height의 배수
+            objs : {
+                container : document.querySelector('#section-0'),
+                canvas : document.querySelector('#main-canvas'),
+                context : document.querySelector('#main-canvas').getContext('2d'),
+                messageA : document.querySelector('.section0-message.a'),
+                messageB : document.querySelector('.section0-message.b'),
+                messageC : document.querySelector('.section0-message.c'),
+                messageD : document.querySelector('.section0-message.d'),
+                canvasImages : [],
+            },
+            vals : {
+                imageCount : 500,
+
+                canvas_image_seq : [0, 499, {start : 0, end : 0.95}],
+                canvas_opacity_out : [1, 0, {start : 0.80, end : 0.95}],
+                
+                //점점 밝아짐
+                messageA_opacity_in : [0, 1, {start : 0.05, end : 0.14}],
+                messageA_opacity_out : [1, 0, {start : 0.15, end : 0.24}],
+                messageA_translate1 : [0, -30, {start : 0.05, end : 0.14}],
+                messageA_translate2 : [-30, -60, {start : 0.15, end : 0.24}],
+
+                messageB_opacity_in : [0, 1, {start : 0.25, end : 0.34}],
+                messageB_opacity_out : [1, 0, {start : 0.35, end : 0.44}],
+                messageB_translate1 : [0, -30, {start : 0.25, end : 0.34}],
+                messageB_translate2 : [-30, -60, {start : 0.35, end : 0.44}],
+
+                messageC_opacity_in : [0, 1, {start : 0.45, end : 0.54}],
+                messageC_opacity_out : [1, 0, {start : 0.55, end : 0.64}],
+                messageC_translate1 : [0, -30, {start : 0.45, end : 0.54}],
+                messageC_translate2 : [-30, -60, {start : 0.55, end : 0.64}],
+
+                
+                messageD_opacity_in : [0, 1, {start : 0.65, end : 0.74}],
+                messageD_opacity_out : [1, 0, {start : 0.75, end : 0.84}],
+                messageD_translate1 : [0, -30, {start : 0.65, end : 0.74}],
+                messageD_translate2 : [-30, -60, {start : 0.75, end : 0.84}],
+
+            }
+        },
+        //section-1의 정보
+        {   
+            height : 0, //section-1의 높이
+            multiple : 2, //height의 배수
+
+            objs : {
+                container : document.querySelector('#section-1'),
+            },
+            vals : {}
+        }
+    ];
+
+
+    ///////////////////////// 실행부 ///////////////////////////
+    window.addEventListener('scroll', ()=>{
+       
+        yOffset = window.scrollY;   //스크롤값을 갱신
+
+       curSection = getCurrentSection(); //현재섹션을 가지고옴
+
+       sectionYOffset = yOffset - getPrevSectiongHeight();
+
+       setBodyID(curSection);
+       setLocalnavMenu();
+
+       playAnimation();
+
+       
+       
+    });
+    //웹페이지의 로딩이 끝났을 때
+    window.addEventListener('load', ()=>{
+        //레이아웃 설정
+        setLayout();
+
+        setCanvas();
+
+        //현재섹션을 가지고 옴
+        curSection = getCurrentSection();
+        
+        setLocalnavMenu();
+        
+        //body id를 설정
+        setBodyID(curSection);
+
+        
+
+        
+    });
+
+    window.addEventListener('resize', ()=>{
+
+        setLayout();
+
+        setCanvas();
+
+        //현재섹션을 가지고 옴
+        curSection = getCurrentSection();
+        
+        setLocalnavMenu();
+        
+        //body id를 설정
+        setBodyID(curSection);
+    })
+    
+
+})();
