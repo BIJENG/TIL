@@ -1,0 +1,85 @@
+처음 인덱스 구성
+
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>We are All Virtual Entertainer !!!</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Gugi&family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Gugi&family=Noto+Sans+KR:wght@100..900&family=Single+Day&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Dongle&family=Gugi&family=Noto+Sans+KR:wght@100..900&family=Single+Day&display=swap" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="reset.css">
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    <div class="main-bar">
+        <h1 class="main-bar-title">W A V E</h1>
+        <a href="#" class="main-bar-sign">Sign up <i class="material-icons">login</i></a>
+        
+    </div>
+
+    <nav class="main-nav">
+        <a href="#" class="main-nav-link"><i class="material-icons">home</i> Home</a>
+        <a href="#" class="main-nav-link"><i class="material-icons">youtube_searched_for</i> Introduce</a>
+        <a href="#" class="main-nav-link"><i class="material-icons">play_circle_filled</i> Video</a>
+        <a href="#" class="main-nav-link"><i class="material-icons">construction</i> help</a>
+    </nav>
+
+    <section class="section0" id="section0-script">
+        <div class="section0-background">
+            <p class="section0-background-font a"></p>
+        </div>
+
+        <div class="section0-message a">
+            <p>TV에서 더이상 재미를 찾을 수 없던 나에게</p>
+        </div>
+
+        <div class="section0-message b">
+            <p>실시간 라이브 방송은 나에게 혁명이었다.</p>
+        </div>
+
+        <div class="section0-message c">
+            <p>하지만 그것도 잠시 . . .</p>
+        </div>
+
+        <div class="section0-message d">
+            <p>똑같은 사람들과 한정된 공간 다시 찾아온 지루함 . . .</p>
+        </div>
+
+        <div class="section0-message e">
+            <p>더욱 화려하고 새로운건 없을까?</p>
+        </div>
+
+    </section>
+
+    <section class="section1" id="section1-script">
+        <div class="section1-canvas">
+            <canvas id="main-canvas" width="1300px" height="1000px"></canvas>
+        </div>
+
+
+    </section>
+
+    <section class="section2" id="section2-script">section2</section>
+
+    <footer>
+        
+    </footer>
+    
+    <script src="main.js"></script>
