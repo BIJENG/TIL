@@ -1,0 +1,93 @@
+JOIN
+
+둘 이상의 테이블을 참조하여 하나의 테이블을 만들어내는 연산
+
+즉 튜플의 조합집합을 만들어내는 연산
+
+​
+
+JOIN을 쓰는 이유
+
+데이터 정규화: 데이터베이스를 정규화하면 테이블이 여러 테이블로 분할됩니다. 이 때 JOIN을 사용하여 이러한 테이블을 다시 결합하여 필요한 정보를 가져올 수 있습니다.
+
+데이터 관계 표현: 관계형 데이터베이스에서는 여러 테이블 간에 관계가 있습니다. JOIN을 사용하여 이러한 관계를 표현하고 관련된 정보를 가져올 수 있습니다.
+
+데이터 질의: 데이터베이스에서 데이터를 검색할 때 하나의 테이블 만으로는 충분하지 않을 수 있습니다. JOIN을 사용하여 여러 테이블의 데이터를 결합하여 더 유용한 결과를 얻을 수 있습니다.
+
+효율성: JOIN은 데이터베이스 서버에서 데이터를 처리하고 결과를 반환하는 방법 중 하나입니다. 이를 통해 하나의 쿼리로 여러 테이블의 데이터를 처리하고 효율적으로 가져올 수 있습니다.
+
+유연성: JOIN을 사용하면 필요에 따라 다양한 유형의 결합을 수행할 수 있습니다. INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL JOIN 등의 다양한 JOIN 유형을 사용하여 데이터를 가져올 수 있습니다.
+
+​
+
+ex) 테이블을 2개 만들고 JOIN 연습
+
+​
+
+CREATE TABLE AUTHOR_TBL (
+
+    ID          NUMBER,
+
+    NAME        VARCHAR2(50) NOT NULL,
+
+    CITY        VARCHAR2(20),
+
+    JOB         VARCHAR2(50),
+
+    JOB_DESC    VARCHAR2(200),
+
+    PRIMARY KEY(ID)
+
+);
+
+​
+
+CREATE TABLE BOOK_TBL (
+
+    ID          NUMBER,
+
+    TITLE       VARCHAR2(100) NOT NULL,
+
+    BOOK_DESC   VARCHAR2(200),
+
+    AUTHOR_ID   NUMBER,
+
+    PRIMARY KEY(ID),
+
+    FOREIGN KEY(AUTHOR_ID) REFERENCES AUTHOR_TBL(ID)
+
+);
+
+​
+
+JOIN의 종류
+
+INNER JOIN
+
+LEFT JOIN
+
+RIGHT JOIN
+
+FULL OUTER JOIN
+
+​
+
+LEFT OUTER JOIN
+
+A테이블을 기준으로 A와 겹치는 B를 조인
+
+ex) SELECT * FROM BOOK_TBL   - A 
+
+       LEFT JOIN AUTHOR_TBL   - B
+
+      ON BOOK_TBL.AUTHOR_ID = AUTHOR_TBL.ID;
+
+​
+
+INNER JOIN
+
+A, B 에 공통적으로 존재하는 행을 JOIN
+
+NULL이 제외, 성능상의 이점이 많음
+
+NULL이 제외된다는것은 '연산의 대상 자체가 되지 않음'을 의미
