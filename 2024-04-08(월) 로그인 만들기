@@ -1,0 +1,80 @@
+
+어노테이션이용
+
+@Data
+public class UserVO {
+    private String id;
+    private String passwd;
+    private String email;
+    private String phone;
+    private String name;    
+}
+
+DBMS로 실제 데이터 삽입
+ex)
+CREATE TABLE USER_TABLE (
+    ID      VARCHAR2(200) NOT NULL PRIMARY KEY,
+    PASSWD  VARCHAR2(200) NOT NULL,
+    EMAIL   VARCHAR2(200) NOT NULL,
+    PHONE   VARCHAR2(200),
+    NAME    VARCHAR2(200)
+);
+
+INSERT INTO USER_TABLE 
+VALUES ('ABJ', '1234', 'qudwns4393@gmail.com', '010-4106-3162', '안병준');
+
+COMMIT;
+
+MVC구조
+
+controller, service, dao, vo 폴더를 각각 만들고
+UserController, UserService, UserVO 클래스 생성
+UserDAO 는 데이터베이스와의 상호작용을 하기에 인터페이스로 생성한다.
+
+index.jsp, login.jsp, join.jsp 생성
+
+어노테이션으로
+@Controller
+@Service
+@MapperScan
+클래스를 만든다
+
+데이터베이스안에 내용
+User.XML 을 만든다
+ex)
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.myboard.dao.UserDAO">
+
+<resultMap type="com.example.myboard.vo.UserVO" id="userMap">
+    <result property = "id"       column = "id"/>
+    <result property = "passwd"   column = "passwd"/>
+    <result property = "email"       column = "email"/>
+    <result property = "phone"       column = "phone"/>
+    <result property = "name"       column = "name"/>     
+</resultMap>
+
+<select id="selectOneUser" resultMap="userMap">
+    SELECT *
+    FROM USER_TABLE
+    WHERE ID = #{id} AND PASSWD = #{passwd}
+</select>		
+</mapper>
+
+-------------------------- 로그인 완성---------------------------------------------
+
+회원가입페이지 만들기
+
+join.jsp 를 만들고
+Controller 를 추가한다
+Service에서 새로운 insertOneUser 함수안에 VO 객체를 넣어서 만들고
+UserDAO 에서도 똑같이 옮긴다
+User.XML 에서 insert 항목을 추가한다
+ex)
+<insert id="insertOneUser">
+    INSERT INTO USER_TABLE
+    VALUES (#{id}, #{passwd}, #{email}, #{phone}, #{name})
+</insert>
+
+
+
