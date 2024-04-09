@@ -1,0 +1,80 @@
+먼저 데이터베이스에 회원가입 양식 테이블을 만든다
+
+Join.jsp를 만들어 회원가입 폼을 만들고, 스크립트로 클릭시 가입하는 이벤트 핸들러를 만든다.
+ex)
+<body>
+    <h1>회원가입</h1>
+
+    <form action="joinProcess" method="post" id="frmJoin">
+        아이디 : <input type="text" id="id" name="id"><br>
+        패스워드 : <input type="text" id="passwd" name="passwd"><br>
+        이메일 : <input type="email" id="email" name="email"><br>
+        전화번호 : <input type="text" id="phone" name="phone"><br>
+    </form>
+    <button type="button" id="btnJoin">가입</button>
+    <button type="button" id="btnHome">홈으로</button><br>
+    
+<script>
+(()=>{
+    const $frmJoin = document.getElementById('frmJoin');
+    const $btnJoin = document.getElementById('btnJoin');
+    const $btnHome = document.getElementById('btnHome');
+
+    $btnJoin.addEventListener('click', ()=>{
+        const id = document.getElementById('id').value;
+        const passwd = document.getElementById('passwd').value;
+        const email = document.getElementById('email').value;
+        const phone = document.getElementById('phone').value;
+
+        console.log(id);console.log(passwd);console.log(email);console.log(phone);
+
+        if ((id.trim() == '') || 
+            (id.trim() == '') || 
+            (id.trim() == '') || 
+            (id.trim() == '')) {
+                alert("회원가입 정보를 모두 넣어 주세요.")
+                return;
+            }  
+        $frmJoin.submit();
+    });
+    $btnHome.addEventListener('click', ()=>{
+        location.href = "/index";
+
+    });
+})();
+</script>
+
+컨트롤러를 통해 조인와 조인프로세스 맵핑시킨다.
+ex)
+@GetMapping("/join")
+    public String join(){
+        return "/join";
+    }
+
+@PostMapping("/joinProcess")
+    public String joinProcess(@ModelAttribute("UserVO") UserVO vo) throws Exception
+    {
+        int result = userService.insertOneUser(vo);
+
+        System.out.println("insert result = " + result);
+
+        return "redirect:/login";
+    }
+
+컨트롤러에서 서비스로 통해 UserDAO 로 VO를 옮긴다.
+ex)
+public int insertOneUser(UserVO vo) throws Exception {
+        return dao.insertOneUser(vo);
+    }
+------------------------------------------------------
+interface UserDAO
+
+public int insertOneUser(UserVO vo) throws Exception;
+
+UserDAO에서 데이터베이스와의 상호작용을 위해 SQL 언어인 User.xml 을 만든다.
+ex)
+    <insert id="insertOneUser">
+        INSERT INTO USER_TABLE(ID, PASSWD, EMAIL, PHONE) VALUES (
+            #{id}, #{passwd}, #{email}, #{phone}
+        )
+    </insert>
