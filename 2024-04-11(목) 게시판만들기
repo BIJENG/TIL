@@ -1,0 +1,149 @@
+
+대략적인 순서로
+1.BoardVO 를 만든다
+2.board.jsp 로 게시판의 전체적인 구조와 틀을 만들고
+3.Controller 를 통해 board.jsp 에 접근할수 있게 매핑한다
+4.http://localhost:9090/board 에서는 List<BoardVO> 을 매개변수로 받아 데이터베이스 내에 있는 모든 리스트를 보여준다.
+5.Controller에 이어 BoardService 클래스를 만들어 @Service 어노테이션으로 BoardVO 를 BoardDAO 로 운반한다
+6.BoardDAO 에서 xml를 통해 데이터베이스에서 자료를 가져와서 BoardVO에 넣는다
+7.BoardVO는 다시 BoardService를 통해 운반되어 Controller 로 이동하고 view 인 board.jsp 로 결과를 출력한다.
+
+1.BoardVO 를 만든다
+@Data
+public class BoardVO {
+    private String no;          // 번호
+    private String id;          // 회원아이디
+    private String name;        // 회원이름
+    private String title;       // 제목
+    private String content;     // 내용
+    private String regdate;     // 등록일
+    private String vcount;      // 조회수
+    
+}
+
+2.board.jsp 로 게시판의 전체적인 구조와 틀을 만들고
+<body>
+    <h1>board.jsp</h1>
+
+    <table border="1" id="board">
+        <thead>
+            <tr>
+                <th>NO</th>
+                <th>아이디</th>
+                <th>이름</th>
+                <th>제목</th>
+                <th>등록일</th>
+                <th>조회수</th>
+            </tr>
+        </thead>
+    
+        <tbody>
+        </tbody>
+    </table>
+
+3.Controller 를 통해 board.jsp 에 접근할수 있게 매핑한다
+4.http://localhost:9090/board 에서는 List<BoardVO> 을 매개변수로 받아 데이터베이스 내에 있는 모든 리스트를 보여준다.
+@Controller
+public class BoardController {
+
+    @Autowired
+    private BoardService boardService;
+    
+    @GetMapping("/board")
+    public String board(){
+        return "board";
+
+    }
+
+    @PostMapping("/board/list")
+    @ResponseBody
+    public List<BoardVO> boardList() throws Exception {
+        List<BoardVO> list =  boardService.selectBoardList();
+        return list;       
+    }
+
+5.Controller에 이어 BoardService 클래스를 만들어 @Service 어노테이션으로 BoardVO 를 BoardDAO 로 운반한다
+@Service
+public class BoardService {
+    @Autowired
+    private BoardDAO dao;
+
+    public List<BoardVO> selectBoardList() throws Exception {        
+        return dao.selectBoardList();
+
+    }
+    
+}
+
+-----------------------------------------------------------------
+
+@MapperScan(basePackages = "com.example.myboard.dao")
+public interface BoardDAO {
+
+    public List<BoardVO> selectBoardList() throws Exception;
+    
+}
+
+6.BoardDAO 에서 xml를 통해 데이터베이스에서 자료를 가져와서 BoardVO에 넣는다
+<mapper namespace="com.example.myboard.dao.BoardDAO">
+
+    <resultMap type="com.example.myboard.vo.BoardVO" id="boardMap">
+        <result property="no"           column="no"/>
+        <result property="id"           column="id"/>
+        <result property="name"         column="name"/>
+        <result property="title"        column="phone"/>
+        <result property="content"      column="content"/>
+        <result property="regdate"      column="regdate"/>
+        <result property="vcount"       column="vcount"/>
+    </resultMap>
+
+    <select id="selectBoardList" resultMap="boardMap">
+        SELECT B.NO, B.ID, U.NAME, B.TITLE, B.REGDATE, B.VCOUNT 
+        FROM BOARD_TBL B JOIN USER_TBL U ON B.ID = U.ID
+        ORDER BY NO
+    </select>
+
+</mapper>
+
+7.BoardVO는 다시 BoardService를 통해 운반되어 Controller 로 이동하고 view 인 board.jsp 로 결과를 출력한다.
+<script>
+(()=>{
+    const getBoard = function() {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/board/list', true);
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+        xhr.onreadystatechange = function() {
+            if ((xhr.readyState === XMLHttpRequest.DONE) && (xhr.status === 200)) {
+                let data = JSON.parse(xhr.responseText);
+                const $tbody = document.querySelector('#board tbody');
+
+                $tbody.innerHTML = ''; //tbody를 초기화 한다.
+
+                data.forEach(function(item) {
+                    const $row = document.createElement('tr');
+                    $row.innerHTML = '<td>' + item.no +'</td>' +
+                                     '<td>' + item.id +'</td>' +
+                                     '<td>' + item.name +'</td>' +
+                                     '<td><a href="/board/content?no=' + item.no + '">' + item.title +'</a></td>' +
+                                     '<td>' + item.regdate +'</td>' +
+                                     '<td>' + item.vcount +'</td>';
+                                     
+                    $tbody.appendChild($row);
+                });
+
+            }
+            
+        }
+
+        xhr.send();
+     
+    }   
+
+    getBoard();
+
+})();
+</script>  
+
+
+
