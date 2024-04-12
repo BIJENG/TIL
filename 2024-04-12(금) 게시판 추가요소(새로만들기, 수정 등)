@@ -1,0 +1,197 @@
+1. 게시글 누를때마다 조회수 올리기(본인계정 로그인이 경우 조회수 오르지 않음)
+2. 게시글 새로 만들기(게스트 계정일 경우 게시글생성 불가)
+3. 게시글 양식 만들고, 매핑시키기
+4. 매핑시킨 게시글 똑같이 서비스, DAO로 보내기
+5. xml 로 매퍼스캔
+
+1. 게시글 누를때마다 조회수 올리기(본인계정 로그인이 경우 조회수 오르지 않음)
+    @GetMapping("/board/content")
+    public String boardContent(@ModelAttribute BoardVO vo,
+                               HttpServletRequest request, 
+                               Model model) throws Exception {
+        int cnt = 0;
+        // 컨텐츠의 ID와 세션ID를 비교하기 위해.. 
+        HttpSession session = request.getSession();     
+        UserVO user = (UserVO)session.getAttribute("USER");
+                
+        //no를 이용하여 게시글을 가지고온다.
+        vo = boardService.selectBoardContent(vo);
+
+        // no-session (guest)
+        if (user == null) {
+            boardService.updateBoardCount(vo);
+
+            // DB에서 1증가된 VCount를 vo에도 적용한다.
+            cnt = Integer.parseInt(vo.getVcount());
+            cnt++;
+            vo.setVcount(Integer.toString(cnt));
+
+            model.addAttribute("readOnly", true);
+        }
+        else {
+
+            if (user.getId().equals(vo.getId())) { 
+                model.addAttribute("readOnly", false);
+            }            
+            else {        
+                boardService.updateBoardCount(vo);
+
+                // DB에서 1증가된 VCount를 vo에도 적용한다.
+                cnt = Integer.parseInt(vo.getVcount());
+                cnt++;
+                vo.setVcount(Integer.toString(cnt));
+            
+                model.addAttribute("readOnly", true);
+    
+            }
+        }
+
+        //2. 이 게시글을 Model을 통해 jsp로 넘겨준다.
+        model.addAttribute("vo", vo);
+        return "content";
+    
+    }
+
+2. 게시글 새로 만들기(게스트 계정일 경우 게시글생성 불가)
+    const $btnNewContent = document.querySelector('#btnNewContent');
+
+    $btnNewContent.addEventListener('click', ()=>{
+        if (${session} === false)
+        {
+            alert("글을 쓰려면 로그인을 해야 합니다.");
+            return;
+        }
+
+        location.href="/newContent";
+
+    });
+
+
+
+3. 게시글 양식 만들고, 매핑시키기
+<body>
+    <h1>글쓰기</h1>
+    <form action="/insert" method="post" id="frmNewContent">    
+        제목 : <input type="text" name="title" id="txtTitle"> <br>    
+        내용 : <br>
+        <textarea name="content" id="txtContent" cols="50" rows="10"></textarea>
+    </form>
+    <br> 
+    
+    <button type="button" id="btnInsert">저장</button> <button type="button" id="btnBoard">목록으로</button> 
+
+<script>
+(()=>{
+    const $frmNewContent= document.querySelector('#frmNewContent')
+    const $txtTitle     = document.querySelector('#txtTitle');
+    const $txtContent   = document.querySelector('#txtContent');
+    
+    const $btnInsert    = document.querySelector('#btnInsert');
+    const $btnBoard     = document.querySelector('#btnBoard');
+    
+
+    $btnInsert.addEventListener('click', ()=>{
+
+        const title = $txtTitle.value;
+        const content = $txtContent.value;
+
+        //제목이나 내용이 있다면 경고메시지를 뿌려준다. 
+        if ((title.trim() === '') || (content.trim() === '')) {
+            alert('제목 또는 내용이 잘못되었습니다.');
+            return;        
+        }
+
+        const formData = new FormData($frmNewContent);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/insert', true);
+
+        xhr.onreadystatechange = function() {
+            if ((xhr.readyState === XMLHttpRequest.DONE) && (xhr.status === 200)) { 
+                if (xhr.responseText === 'true') {
+                    alert('저장되었습니다.');
+                    location.href='/board';
+                } else {
+                    alert('저장에 실패하였습니다.');
+                }
+                    
+            }
+        }
+
+        xhr.send(formData);
+
+    });
+
+    $btnBoard.addEventListener('click', ()=>{
+        const title = $txtTitle.value;
+        const content = $txtContent.value;
+
+        //제목이나 내용이 있다면 경고메시지를 뿌려준다. 
+        if ((title.trim() !== '') || (content.trim() !== '')) {
+            if (confirm('작성중인 글을 취소하고 목록으로 갈까요?')) {
+                location.href = '/board';
+            }            
+        }
+        else {
+            location.href = '/board';
+        }
+
+    });
+
+})();
+   
+</script>
+
+4. 매핑시킨 게시글 똑같이 서비스, DAO로 보내기
+  public int updateBoardContent(BoardVO vo) throws Exception {
+        return dao.updateBoardContent(vo);
+
+    }
+
+    public int deleteBoardContent(BoardVO vo) throws Exception {
+        return dao.deleteBoardContent(vo);
+
+    }
+
+    public int insertBoardContent(BoardVO vo) throws Exception {
+        return dao.insertBoardContent(vo);
+
+    }
+--------------------------------------------------------------------
+@MapperScan(basePackages = "com.example.myboard.dao")
+public interface BoardDAO {
+
+    public List<BoardVO> selectBoardList() throws Exception;
+    public BoardVO selectBoardContent(BoardVO vo) throws Exception;
+    public int updateBoardCount(BoardVO vo) throws Exception;    
+    public int updateBoardContent(BoardVO vo) throws Exception;    
+    public int deleteBoardContent(BoardVO vo) throws Exception;    
+    public int insertBoardContent(BoardVO vo) throws Exception;    
+    
+}
+
+5. xml 로 매퍼스캔
+    <update id="updateBoardContent">
+        UPDATE BOARD_TBL 
+        SET 
+            TITLE = #{title},   `
+            CONTENT = #{content},
+            REGDATE = sysdate
+        WHERE NO = #{no}
+    </update>
+
+    <delete id="deleteBoardContent">
+        DELETE FROM BOARD_TBL WHERE NO=#{no}
+    </delete>
+
+    <insert id="insertBoardContent">
+        INSERT INTO BOARD_TBL (NO, ID, TITLE, CONTENT, REGDATE, VCOUNT)
+        VALUES (
+            (SELECT NVL(MAX(NO),0)+1 FROM BOARD_TBL),
+            #{id},
+            #{title},
+            #{content},
+            sysdate,
+            0
+        )
+    </insert>
