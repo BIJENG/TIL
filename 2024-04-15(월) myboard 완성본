@@ -1,0 +1,222 @@
+컨트롤러
+1 BoardController.java
+2 MainController.java
+3 UserController.java
+
+서비스
+1 BoardService.java
+2 UserService.java
+
+dao
+1 BoardDAO.java
+2 UserDAO.java
+
+resources
+mapper   1 Board.xml
+         2 User.xml
+
+
+jsp
+index.jsp
+
+board   1 content.jsp
+        2 list.jsp
+        3 newContent.jsp
+
+user    1 join.jsp
+        2 login.jsp
+
+
+----------------------------------------------------------------
+ 추가된내용
+
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page trimDirectiveWhitespaces="true"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Board Content</title>
+</head>
+<body>
+
+    <h1 id="txtMainTitle">게시글 수정</h1>    
+
+    <form action="/board/saveProcess" method="post" id="frmContent">
+        <input type="hidden" name="no" value="${vo.no}">
+        제목 : <input type="text" name="title" id="txtTitle" value="${vo.title}"> <br>
+        아이디 : <span>${vo.id}</span>, 날짜 : <span>${vo.regdate}</span>, 조회수 : <span>${vo.vcount}</span> <br>
+        <textarea name="content" id="txtContent" cols="50" rows="10">${vo.content}</textarea><br>    
+    </form>
+    
+    <button type="button" id="btnSave">저장</button> <button type="button" id="btnBoard">목록으로</button> 
+    <button type="button" id="btnDelete">삭제</button>
+
+<script>
+(()=>{
+    const $txtMainTitle = document.querySelector('#txtMainTitle');
+    const $frmContent   = document.querySelector('#frmContent');
+    const $txtTitle     = document.querySelector('#txtTitle');
+    const $txtContent   = document.querySelector('#txtContent');
+    
+    const $btnSave      = document.querySelector('#btnSave');
+    const $btnBoard     = document.querySelector('#btnBoard');
+    const $btnDelete      = document.querySelector('#btnDelete');
+
+    if (${readOnly}) {
+        $txtTitle.readOnly = true;
+        $txtContent.readOnly = true;
+        $btnSave.disabled = true;
+        $btnDelete.disabled = true;
+        $txtMainTitle.textContent = "게시글 읽기";
+    }
+
+    $btnSave.addEventListener('click', ()=>{
+        const formData = new FormData($frmContent);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/board/saveProcess', true);
+
+        xhr.onreadystatechange = function() {
+            if ((xhr.readyState === XMLHttpRequest.DONE) && (xhr.status === 200)) { 
+                if (xhr.responseText === 'true')
+                    alert('저장되었습니다.');
+                else
+                    alert('저장에 실패하였습니다.');
+            }
+        }
+
+        xhr.send(formData);
+
+    });
+
+    $btnBoard.addEventListener('click', ()=>{
+        location.href='/board/list';
+        
+    });
+
+    $btnDelete.addEventListener('click', ()=>{
+        if (confirm('게시글이 영구히 삭제 됩니다. 삭제 할까요?')) {
+
+            const formData = new FormData($frmContent);
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/board/deleteProcess', true);
+
+            xhr.onreadystatechange = function() {
+                if ((xhr.readyState === XMLHttpRequest.DONE) && (xhr.status === 200)) { 
+                    if (xhr.responseText === "true")
+                    {
+                        alert('삭제 되었습니다.');
+                        location.href="/board/list";
+                    }
+                    else {
+                        alert('삭제에 실패하였습니다.');
+                    }
+                    
+                    
+                }
+            }
+
+            xhr.send(formData);
+        }
+    
+    });
+
+})();
+</script>
+        
+</body>
+</html>
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page trimDirectiveWhitespaces="true"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Content</title>
+</head>
+<body>
+    <h1>글쓰기</h1>
+    <form action="/board/insertProcess" method="post" id="frmNewContent">    
+        제목 : <input type="text" name="title" id="txtTitle"> <br>    
+        내용 : <br>
+        <textarea name="content" id="txtContent" cols="50" rows="10"></textarea>
+    </form>
+    <br> 
+    
+    <button type="button" id="btnInsert">저장</button> <button type="button" id="btnBoard">목록으로</button> 
+   
+<script>
+(()=>{
+    const $frmNewContent= document.querySelector('#frmNewContent')
+    const $txtTitle     = document.querySelector('#txtTitle');
+    const $txtContent   = document.querySelector('#txtContent');
+    
+    const $btnInsert    = document.querySelector('#btnInsert');
+    const $btnBoard     = document.querySelector('#btnBoard');
+    
+
+    $btnInsert.addEventListener('click', ()=>{
+
+        const title = $txtTitle.value;
+        const content = $txtContent.value;
+
+        //제목이나 내용이 있다면 경고메시지를 뿌려준다. 
+        if ((title.trim() === '') || (content.trim() === '')) {
+            alert('제목 또는 내용이 잘못되었습니다.');
+            return;        
+        }
+
+        const formData = new FormData($frmNewContent);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/board/insertProcess', true);
+
+        xhr.onreadystatechange = function() {
+            if ((xhr.readyState === XMLHttpRequest.DONE) && (xhr.status === 200)) { 
+                if (xhr.responseText === 'true') {
+                    alert('저장되었습니다.');
+                    location.href='/board/list';
+                } else {
+                    alert('저장에 실패하였습니다.');
+                }
+                    
+            }
+        }
+
+        xhr.send(formData);
+
+    });
+
+    $btnBoard.addEventListener('click', ()=>{
+        const title = $txtTitle.value;
+        const content = $txtContent.value;
+
+        //제목이나 내용이 있다면 경고메시지를 뿌려준다. 
+        if ((title.trim() !== '') || (content.trim() !== '')) {
+            if (confirm('작성중인 글을 취소하고 목록으로 갈까요?')) {
+                location.href = '/board/list';
+            }            
+        }
+        else {
+            location.href = '/board/list';
+        }
+
+    });
+
+
+
+
+})();
+    
+</script>
+</body>
+</html>
+
+
+
