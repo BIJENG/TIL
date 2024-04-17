@@ -1,0 +1,128 @@
+게시판에 리스트가 출력되고 제목을 누르면 해당 게시글이 나오고 조회수가 올라간다
+또한 본인이 쓴 글이면 수정과 삭제가 가능하게 한다.
+ex)
+    <h1 id="txtMainTitle">게시글 수정</h1>    
+
+    <form action="/board/saveProcess" method="post" id="frmContent">
+        <input type="hidden" name="no" value="${vo.no}">
+        제목 : <input type="text" name="title" id="txtTitle" value="${vo.title}"> <br>
+        아이디 : <span>${vo.id}</span>, 날짜 : <span>${vo.regdate}</span>, 조회수 : <span>${vo.vcount}</span> <br>
+        <textarea name="content" id="txtContent" cols="50" rows="10">${vo.content}</textarea><br>    
+    </form>
+    
+    <button type="button" id="btnSave">저장</button> <button type="button" id="btnBoard">목록으로</button> 
+    <button type="button" id="btnDelete">삭제</button>
+
+    기본 양식을 이렇게두고 Ajax통신을 이용하여 내부 컨텐츠가 눌러도 새로운 페이지를 불러오기보다는 특정 부분만 바뀌도록한다.
+
+
+    $btnSave.addEventListener('click', ()=>{
+        const formData = new FormData($frmContent);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/board/saveProcess', true);
+
+        xhr.onreadystatechange = function() {
+            if ((xhr.readyState === XMLHttpRequest.DONE) && (xhr.status === 200)) { 
+                if (xhr.responseText === 'true')
+                    alert('저장되었습니다.');
+                else
+                    alert('저장에 실패하였습니다.');
+            }
+        }
+
+        xhr.send(formData);
+
+    });
+
+    $btnBoard.addEventListener('click', ()=>{
+        location.href='/board/list';
+        
+    });
+
+    $btnDelete.addEventListener('click', ()=>{
+        if (confirm('게시글이 영구히 삭제 됩니다. 삭제 할까요?')) {
+
+            const formData = new FormData($frmContent);
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/board/deleteProcess', true);
+
+            xhr.onreadystatechange = function() {
+                if ((xhr.readyState === XMLHttpRequest.DONE) && (xhr.status === 200)) { 
+                    if (xhr.responseText === "true")
+                    {
+                        alert('삭제 되었습니다.');
+                        location.href="/board/list";
+                    }
+                    else {
+                        alert('삭제에 실패하였습니다.');
+                    }
+                    
+                    
+                }
+            }
+
+            xhr.send(formData);
+        }
+    
+    });
+
+
+또한 글 수정과 삭제에 있어서 글쓴이가 맞다면 가능하고 아니면 못하도록 한다.
+
+    if (${readOnly}) {
+        $txtTitle.readOnly = true;
+        $txtContent.readOnly = true;
+        $btnSave.disabled = true;
+        $btnDelete.disabled = true;
+        $txtMainTitle.textContent = "게시글 읽기";
+    }
+
+----------------------------------------------------------------------
+
+BoardController 부분
+
+@GetMapping("/board/content")
+    public String boardContent(@ModelAttribute BoardVO vo,
+                               HttpServletRequest request,       
+                               Model model) throws Exception {
+        int count = 0;                                                    // 조회수를 위해 카운트라는 변수를 만들어 0으로 초기화 한다.
+        HttpSession session = request.getSession();                       // 세션을 통해 현재 로그인하고 있는 계정을 가져온다
+        UserVO user = (UserVO)session.getAttribute("USER");
+
+        BoardVO result = boardService.selectBoardContent(vo);            //  선택한 내용의 데이터베이스를 가져온다
+
+            
+        if (user == null) { //guest                                      //  user가 null이라면 로그인을 하지 않는것이기 때문에 조회수가 증가되어야하고 글내용은 읽기만 가능해야한다.
+            
+            boardService.updateBoardCount(vo);                
+
+            // DB에서 1증가된 VCount를 vo에도 적용한다.
+            count = Integer.parseInt(result.getVcount());                //  DB에서만 1증가시키면 웹에서 보여지는 부분은 새페이지로 리로딩해야 조회수가 올라가는게 적용됨으로 가져온 데이터데이스에서
+            count++;                                                         직접 get , set을 통해 카운트를 하나 증가시킨다.
+            result.setVcount(Integer.toString(count));            
+            
+            model.addAttribute("readOnly", true);                        // 게스트계정일 경우 readOnly만 가능하게한다.
+
+        }
+        else {
+            if (user.getId().equals(result.getId())) {                   // 로그인 사용자의 글인 경우
+                model.addAttribute("readOnly", false);
+            }
+            else {                                                       // 로그인은 했으나 글 작성자는 아닌 경우 ( 조회수는 올라가고, 글 수정과 삭제는 불가능하다)
+                boardService.updateBoardCount(vo);
+
+                // DB에서 1증가된 VCount를 vo에도 적용한다.
+                count = Integer.parseInt(result.getVcount());
+                count++;
+                result.setVcount(Integer.toString(count));            
+            
+                model.addAttribute("readOnly", true);
+            }
+
+        }
+
+        model.addAttribute("vo", result);                               // jsp에서 model 함수를 사용하기 위해서 addAttribute한다. 
+        return "/board/content";
+    }
