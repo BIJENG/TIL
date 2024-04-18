@@ -1,0 +1,111 @@
+
+게시판에서 저장과 삭제는 새페이지를 출력하는것 보다 ajax 통신을 이용해서 출력하는게 좋다
+글을 고치고 저장을 누르는 부분과 삭제를 하는 부분에 script를 만들어 보았다
+
+$btnSave.addEventListener('click', ()=>{
+        const formData = new FormData($frmContent);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/board/saveProcess', true);                                     
+
+        xhr.onreadystatechange = function() {
+            if ((xhr.readyState === XMLHttpRequest.DONE) && (xhr.status === 200)) { 
+                if (xhr.responseText === 'true')
+                    alert('저장되었습니다.');
+                else
+                    alert('저장에 실패하였습니다.');
+            }
+        }
+
+        xhr.send(formData);
+
+    });
+
+
+    $btnDelete.addEventListener('click', ()=>{
+        if (confirm('게시글이 영구히 삭제 됩니다. 삭제 할까요?')) {
+
+            const formData = new FormData($frmContent);
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/board/deleteProcess', true);
+
+            xhr.onreadystatechange = function() {
+                if ((xhr.readyState === XMLHttpRequest.DONE) && (xhr.status === 200)) { 
+                    if (xhr.responseText === "true")
+                    {
+                        alert('삭제 되었습니다.');
+                        location.href="/board/list";
+                    }
+                    else {
+                        alert('삭제에 실패하였습니다.');
+                    }
+                    
+                    
+                }
+            }
+
+            xhr.send(formData);
+        }
+    
+    });
+
+
+Controller 부분
+Ajax통신으로 받기위해서 @ResponseBody 어노테이션을 사용한다.
+
+    @PostMapping("/board/saveProcess")
+    @ResponseBody
+    public boolean boardSaveProcess(@ModelAttribute BoardVO vo) throws Exception{
+
+        System.out.println(vo);
+        int result = 0;
+        try {
+            result = boardService.updateBoardContent(vo);
+        }
+        catch (Exception excp) {
+            return false;
+        }
+
+        if (result > 0) {
+            return true;
+        }            
+
+        return false;
+    }
+    
+
+    @PostMapping("/board/deleteProcess")
+    @ResponseBody
+    public boolean boardDeleteProcess(@ModelAttribute BoardVO vo) throws Exception{
+   
+        int result = 0;
+        try {
+            result = boardService.deleteBoardContent(vo);
+        }
+        catch (Exception excp) {
+            return false;
+        }
+
+        if (result > 0) {
+            return true;
+        }            
+
+        return false;
+    }
+
+
+XML 부분
+
+    <update id="updateBoardContent">
+        UPDATE BOARD_TBL 
+        SET 
+            TITLE = #{title},
+            CONTENT = #{content},
+            REGDATE = sysdate
+        WHERE NO = #{no}
+    </update>
+
+    <delete id="deleteBoardContent">
+        DELETE FROM BOARD_TBL WHERE NO=#{no}
+    </delete>
