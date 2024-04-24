@@ -1,0 +1,180 @@
+부트스트랩에 캐러셀은 한가지 이미지를 바꾸고거나 자동슬라이드하는 기능밖에 없으므로 직접 이미지가 자동으로 슬라이드되는 캐러셀을 구성하고자 한다
+
+먼저 jsp 부분을 만든다
+css 부분의 수정이 필요한부분은 class로 미리 설정하여 작업을 해둔다
+전체적인 부분을 wrap으로 지정하고
+슬라이드될 부분을 rolling-list 라 지정한다
+가로로 나열할 예정이므로 리스트 태그를 사용하여 구성하고 사용할 이미지 개수에 맞춰 <li>를 구성한다
+예를들어 5장의 이미지를 자동으로 슬라이드 하고 싶으면 이미지마다 각각 div class로 만들어주고 이름을 지정해준다 ex) image-wrap a, image-wrap b
+
+jsp 부분
+
+    <div class="wrap">
+        <div class="rolling-list">
+            <ul>
+                <li>
+                    <div class="image-wrap a">
+                        <img src="/images/list1.jpg" alt="picture1">
+                        <div class="hidden-text">추천하酒</div>
+                    </div>
+                </li>
+
+                <li>
+                    <div class="image-wrap b">
+                        <img src="/images/list2.jpg" alt="picture2">
+                        <div class="hidden-text">검색하酒</div>
+                    </div>
+                </li>
+                <li>
+                    <div class="image-wrap c">
+                        <img src="/images/list3.jpg" alt="picture3">
+                        <div class="hidden-text">소통하酒</div>
+                    </div>
+                </li>
+
+                <li>
+                    <div class="image-wrap d">
+                        <img src="/images/list4.jpg" alt="picture4">
+                        <div class="hidden-text">거래하酒</div>
+                    </div>
+                </li>
+
+                <li>
+                  <div class="image-wrap e">
+                      <img src="/images/list5.jpg" alt="picture4">
+                      <div class="hidden-text">자랑하酒</div>
+                  </div>
+              </li>
+            </ul>
+        </div>
+    </div>
+
+
+css 부분
+이부분에 핵심은 keyframe을 2개 설정한것인데 하나의 키프레임으로는 이미지가 모두 이동했을시 초기화되서 처음부터 재생되므로
+한개의 프레임을 더 만들어서 하나의 키프레임이 끝나면 이어서 복제된 키프레임이 나오게해 무한루프처럼 보이게 한다.
+
+.wrap { 
+    margin-top: 70px;
+    display: flex; 
+    overflow: hidden;
+    
+    
+  }
+  .wrap .rolling-list ul { 
+      display: flex;
+      list-style:none;
+  }
+  .wrap .rolling-list ul li {
+    width: 500px; /* 이미지의 가로 크기와 동일하게 설정 */
+    height: 400px; /* 이미지의 세로 크기와 동일하게 설정 */
+    margin-right: 50px; /* 이미지 사이의 간격 조정 */
+    flex-shrink: 0; /* 이미지가 축소되지 않도록 설정 */
+}
+
+  .wrap .rolling-list ul li:nth-child(even) {
+      margin-top: 0px;
+  }
+  .wrap .rolling-list ul li .image-wrap { 
+      padding-right: 32px; 
+      width: 100%; 
+      flex-shrink: 0; 
+  }
+  .wrap .rolling-list ul li .image-wrap > img { 
+      width: 500px;
+  }
+
+  .wrap .rolling-list ul li .desc strong { 
+      display: block; 
+      font-size: 24px; 
+      margin-bottom: 24px;
+  }
+  .wrap .rolling-list ul li .desc span { 
+      font-size: 18px;
+      line-height: 1.2;
+  }
+
+  .rolling-list.original {
+	animation: rollingleft1 33s linear infinite;
+}
+.rolling-list.clone {
+	animation: rollingleft2 33s linear infinite;
+}
+
+.image-wrap {
+    position: relative;
+    width: 500px; /* 이미지의 원하는 가로 크기 */
+    height: 400px; /* 이미지의 원하는 세로 크기 */
+    overflow: hidden; /* 이미지가 부모 요소를 벗어나지 않도록 설정 */
+    
+}
+
+.image-wrap img {
+    width: 100%; /* 이미지를 부모 요소에 맞추어 가로 크기 조정 */
+    height: auto; /* 세로 크기는 자동으로 조정되도록 설정 */
+    transition: transform 0.3s ease; /* 호버 시 이미지 확대 효과를 유지 */
+    border-radius: 10px;
+}
+
+.image-wrap.hover img {
+    animation-play-state: paused; /* 호버 시 애니메이션 멈춤 */
+    transform: translateY(-100px); /* 이미지를 약간 위로 이동 */
+}
+
+@keyframes rollingleft1 {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+
+@keyframes rollingleft2 {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-100%); }
+}
+
+script 부분
+
+    let roller = document.querySelector('.rolling-list');
+    roller.id = 'roller1'; 
+
+    let clone = roller.cloneNode(true);
+    clone.id = 'roller2';
+    document.querySelector('.wrap').appendChild(clone); 
+
+    document.querySelector('#roller1').style.left = '0px';
+    document.querySelector('#roller2').style.left = document.querySelector('.rolling-list ul').offsetWidth + 'px';
+
+    roller.classList.add('original');
+    clone.classList.add('clone');
+
+    document.querySelectorAll('.rolling-list ul li').forEach(function(imageItem, index) {
+        let imageWrap = imageItem.querySelector('.image-wrap');
+        let image = imageWrap.querySelector('img');
+        let originalTransitionDuration = window.getComputedStyle(image).transitionDuration;
+
+        imageItem.addEventListener('mouseenter', function() {
+            image.style.transitionDuration = '1s';
+            image.style.animationPlayState = 'paused';
+            image.style.transform = 'translateY(-100px)';
+            roller.style.animationPlayState = 'paused'; // 이미지에 커서를 가져다 대면 애니메이션 멈춤
+            if (index < document.querySelectorAll('.rolling-list ul li').length - 1) {
+                document.querySelectorAll('.rolling-list ul li')[index + 1].querySelector('img').style.animationPlayState = 'paused'; // 다음 이미지의 애니메이션도 멈춤
+            }
+            clone.style.animationPlayState = 'paused'; // 복제된 롤링 이미지도 애니메이션 멈춤
+            if (index < document.querySelectorAll('.rolling-list ul li').length - 1) {
+                document.querySelectorAll('.rolling-list ul li')[index + 1].querySelector('.clone').querySelector('img').style.animationPlayState = 'paused'; // 복제된 다음 이미지의 애니메이션도 멈춤
+            }
+        });
+        imageItem.addEventListener('mouseleave', function() {
+            image.style.transitionDuration = originalTransitionDuration;
+            image.style.animationPlayState = 'running';
+            image.style.transform = 'translateY(0)';
+            roller.style.animationPlayState = 'running'; // 이미지에 커서를 벗어나면 애니메이션 다시 시작
+            if (index < document.querySelectorAll('.rolling-list ul li').length - 1) {
+                document.querySelectorAll('.rolling-list ul li')[index + 1].querySelector('img').style.animationPlayState = 'running'; // 다음 이미지의 애니메이션도 다시 시작
+            }
+            clone.style.animationPlayState = 'running'; // 복제된 롤링 이미지의 애니메이션도 다시 시작
+            if (index < document.querySelectorAll('.rolling-list ul li').length - 1) {
+                document.querySelectorAll('.rolling-list ul li')[index + 1].querySelector('.clone').querySelector('img').style.animationPlayState = 'running'; // 복제된 다음 이미지의 애니메이션도 다시 시작
+            }
+        });
+    });
