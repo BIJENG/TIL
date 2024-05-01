@@ -1,0 +1,65 @@
+
+데이터베이스와의 상호 작용이 필요한 경우에는 주로 스프링 부트와 같은 백엔드 프레임워크를 사용합니다. 
+스프링 부트는 자바 기반으로, 데이터를 저장하고 관리하며 비즈니스 로직을 처리하는 데에 효율적입니다.
+
+웹 애플리케이션에서는 종종 사용자에게 동적으로 데이터를 표시하거나 처리해야 할 때가 있습니다. 
+이때는 주로 JavaScript와 같은 스크립트 언어를 사용하여 클라이언트 측에서 데이터를 조작하고 화면에 동적으로 표시합니다. 이렇게 함으로써 사용자 경험을 향상시키고 서버 부하를 줄일 수 있습니다.
+
+데이터베이스와의 상호 작용이 필요한 경우에는 스프링 부트를 사용하여 데이터를 저장하고 관리하고, 
+웹 페이지에서 동적으로 데이터를 표시하거나 처리해야 할 때는 JavaScript를 사용하여 클라이언트 측에서 처리하는 것이 일반적입니다.
+
+
+스프링 부트로 외부 API 가져와서 데이터베이스에 저장하는 예
+
+1.스프링 부트 애플리케이션 구성
+스프링 부트 프로젝트를 생성하고, 필요한 의존성(예: Spring Web, Spring Data JPA)을 추가합니다.
+외부 API와 통신하기 위한 RestTemplate을 사용할 수 있습니다.
+
+2.@Service
+  public class WeatherService {
+      @Autowired
+      private RestTemplate restTemplate;
+  
+      public WeatherResponse getWeather(String city) {
+          String apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=YOUR_API_KEY";
+          ResponseEntity<WeatherResponse> responseEntity = restTemplate.getForEntity(apiUrl, WeatherResponse.class);
+          WeatherResponse weatherResponse = responseEntity.getBody();
+          // 데이터베이스에 저장하는 로직
+          // 저장 예시: weatherRepository.save(weatherResponse);
+          return weatherResponse;
+      }
+  }
+
+3데이터베이스 연동
+JPA를 사용하여 데이터베이스에 저장할 경우, 해당 정보를 엔티티로 매핑하여 저장합니다.
+
+
+스크립트로 외부 API 가져와서 사용하는 예
+
+1.웹 페이지에서의 JavaScript 코드
+function getWeather(city) {
+    fetch('https://api.openweathermap.org/data/2.5/weather?q=' + city + '&appid=YOUR_API_KEY')
+        .then(response => response.json())
+        .then(data => {
+            // 받아온 데이터를 화면에 표시하는 로직
+            document.getElementById('weatherInfo').innerText = '현재 날씨: ' + data.weather[0].description;
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+2.HTML에서 JavaScript 호출
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+</head>
+<body>
+    <h1>날씨 정보</h1>
+    <div id="weatherInfo"></div>
+    <button onclick="getWeather('Seoul')">서울 날씨 조회</button>
+    <button onclick="getWeather('New York')">뉴욕 날씨 조회</button>
+    <script src="weather.js"></script>
+</body>
+</html>
