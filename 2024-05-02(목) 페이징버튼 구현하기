@@ -1,0 +1,203 @@
+
+게시판에서 프리브 1 2 3 4 5 넥스트 버튼 구현하기
+
+먼저 BoardVO 객체에 필요한 항목을 추가한다.
+@Data
+public class BoardVO {
+    private String no;          // 번호
+    private String id;          // 회원아이디
+    private String name;        // 회원이름
+    private String title;       // 제목
+    private String content;     // 내용
+    private String regdate;     // 등록일
+    private String vcount;      // 조회수
+
+    private String totalRows;   // 전체 행의 개수
+    private String page;        // 페이지
+    private String rowsPerPage; // 한번에 보여줄 행의수
+    
+}
+
+Controller 구현
+    @PostMapping("/board/totalrows")
+    @ResponseBody
+    public String boardTotalRows() throws Exception {
+        
+        BoardVO vo = boardService.selectBoardTotalRows();
+        
+        return vo.getTotalRows();
+    
+    }
+
+Service 구현
+    public BoardVO selectBoardTotalRows() throws Exception {
+        return dao.selectBoardTotalRows();
+    }
+
+DAO 구현
+    public BoardVO selectBoardTotalRows() throws Exception;
+
+script 구현
+    const $btnPrevSection = document.querySelector('#btnPrevSection');
+    const $btnNextSection = document.querySelector('#btnNextSection');
+    const $btnPage1 = document.querySelector('#btnPage1');
+    const $btnPage2 = document.querySelector('#btnPage2');
+    const $btnPage3 = document.querySelector('#btnPage3');
+    const $btnPage4 = document.querySelector('#btnPage4'); 
+    const $btnPage5 = document.querySelector('#btnPage5');
+
+    let rowsPerPage = 4; // 한 페이지(page)에 보여줄 행의 수
+    let curPage = 1;     // 현재 페이지
+    let curSection = 1;  // 현재 섹션
+    let pagesPerSection = 5;    // 섹션당 페이지의 개수 (버튼수와 동일)
+
+    
+
+    const getBoardRowCount = function(callbackProc) {
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST','/board/totalrows', true);
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+        xhr.onreadystatechange = function() {
+            if ((xhr.readyState === XMLHttpRequest.DONE) && (xhr.status === 200)) { 
+                let totalRows = JSON.parse(xhr.responseText);
+
+                callbackProc(Number(totalRows));
+                    
+            }
+        }
+
+        xhr.send()
+    }
+
+    const getBoardList = function (page) {
+        const boardReq = {
+            page,           // 몇 번째 페이지
+            rowsPerPage,    // 한 페이지당 출력할 행의 수 
+
+        }
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST','/board/listProcess', true);
+        xhr.setRequestHeader('Content-type', 'application/json');
+
+        xhr.onreadystatechange = function() {
+            if ((xhr.readyState === XMLHttpRequest.DONE) && (xhr.status === 200)) { 
+                const data = JSON.parse(xhr.responseText);
+                
+                if(data.length === 0) {
+
+                    alert('더이상 데이터가 없습니다.');
+                    return;
+                }
+        
+
+                const $tbody = document.querySelector('#tblBoard tbody');
+                $tbody.innerHTML = '';
+
+                data.forEach(function(item) {
+                    const $row = document.createElement('tr');
+                    $row.innerHTML = '<td>' + item.no +'</td>' +
+                                     '<td>' + item.id +'</td>' +                                     
+                                     '<td>' + item.name +'</td>' +
+                                     '<td><a href="/board/content?no=' + item.no + '">' + item.title +'</a></td>' +                                     
+                                     '<td>' + item.regdate +'</td>' +
+                                     '<td>' + item.vcount +'</td>';
+                
+                    $tbody.appendChild($row);
+                });
+                    
+            }
+        }
+        
+        const jsonData = JSON.stringify(boardReq);
+        console.log(jsonData)
+        xhr.send(jsonData);
+    }
+
+    const MoveSection = function (section) {
+        $btnPage1.textContent = String((section - 1) * pagesPerSection + 1);
+        $btnPage2.textContent = String((section - 1) * pagesPerSection + 2);
+        $btnPage3.textContent = String((section - 1) * pagesPerSection + 3);
+        $btnPage4.textContent = String((section - 1) * pagesPerSection + 4);
+        $btnPage5.textContent = String((section - 1) * pagesPerSection + 5);
+    }
+
+    $btnLogin.addEventListener('click', ()=>{
+        location.href = '/user/login';
+    });
+
+    $btnHome.addEventListener('click', ()=>{
+        location.href = '/index';
+    });
+
+    $btnNewContent.addEventListener('click', ()=>{
+        
+        if ('${ID}' === 'null') {
+            alert("글을 작성하시려면 로그인 해주세요.");
+            return;
+        }
+
+        location.href = '/board/newContent';
+
+    });
+
+
+    $btnPrevSection.addEventListener('click', ()=>{
+        if (curSection === 1) {
+            alert('첫 페이지 입니다.');
+            return;
+        }
+
+        curSection--;
+        MoveSection(curSection);
+        
+        // 현재 섹션의 첫페이지
+        getBoardList(((curSection - 1) * pagesPerSection) + 1);
+    })
+
+    $btnNextSection.addEventListener('click', ()=>{
+        getBoardRowCount(function(totalRows) {
+            let maxRows = (pagesPerSection * rowsPerPage) * curSection;
+
+            if(totalRows > maxRows) {
+                curSection++;
+                MoveSection(curSection);
+                getBoardList(((curSection - 1) * pagesPerSection) + 1);
+            } else {
+                alert('마지막 페이지입니다.');
+            }
+        });
+    })
+
+    $btnPage1.addEventListener('click', ()=>{
+        const page = (curSection - 1) * pagesPerSection + 1;
+        getBoardList(page);
+    })
+
+    $btnPage2.addEventListener('click', ()=>{
+        const page = (curSection - 1) * pagesPerSection + 2;
+        getBoardList(page);
+    })
+
+    $btnPage3.addEventListener('click', ()=>{
+        const page = (curSection - 1) * pagesPerSection + 3;
+        getBoardList(page);
+    })
+
+    $btnPage4.addEventListener('click', ()=>{
+        const page = (curSection - 1) * pagesPerSection + 4;
+        getBoardList(page);
+    })
+
+    $btnPage5.addEventListener('click', ()=>{
+        const page = (curSection - 1) * pagesPerSection + 5;
+        getBoardList(page);
+    })
+
+
+    getBoardList(1);
+
+    
+
