@@ -30,4 +30,64 @@ JSX: JSX는 JavaScript를 확장한 문법으로, JavaScript 코드 안에 XML�
 4. 이를 해결하고자 하위 라이브러리, 설정 등을 한번에 마련해논 툴킷을 이용.
 5. 대표적 툴킷  create-react-app
 
+Node.js 설치후 
+
+Project 디렉토리 생성 및 VS-CODE로 열기
+새 폴더  C:\Project\react\exam01
+VS-Code로 열기  새 터미널 (Command Prompt)
+	** power-shell은 에러 발생하니 사용하지 말 것 
+
+VS-Code 터미널에서 아래와 같이 입력
+npx create-react-app .
+
+만약 에러발생시 ..\AppData\Roaming\npm 디렉토리를 생성
+
+npm start 실행
+
+npm start 실행시 
+1. 웹 서버가 실행
+2. 서버는 react 기본 코드 호출.
+    index.html -> index.js -> App.js  
+
+
+소스 코드 구조
+node_modules : 필요한 라이브러리 집합
+public : html, image등 static 요소들
+src : 실제 코드들이 들어 있음.
+
+React를 위한 JSX 기초 문법
+JSX란?
+JavaScript-XML의 약자로 React에서 사용하는 JS 확장문법.
+JSX를 통해 자바스크립트에서 html을 직접 코딩. 
+
+tag에 class 적용
+Tag에 class를 적용할 때에는 class=“” 이런방식으로 하지 않음.
+class는 JS의 예약어 이기 때문임
+따라서 class대신 className=“” 이라고 코딩.
+
+{} 중괄호에 변수 넣기 (Interpolation Notation)
+{ }를 통해 변수를 넣어줄 수 있다 (데이터 바인딩)
+또한 { }는 content 외에도 tag의 id, className등
+소스코드에서 전반적으로 사용된다.
+
+Object를 이용한 Style 속성 설정
+ex)
+let title = "자바스크립트에서 변수 만들기"
+const styleAttr = {
+  color : 'red',
+  background : 'yellow'
+}
+
+return {
+  <div className="App">
+  <div className="global-nav">
+    <h1>My Blog</h1>
+  </div>
+  <h4 style={styleAttr}>{title}</h4>
+  <h4 style={{ color: 'red', backgroundColor: 'blue' }}>{title}</h4>
+
+* background-color의 경우 
+JS에서 backgroundColor로 변경해야한다.
+- 를 “빼기”로 인식하기 때문이다.
+
 
