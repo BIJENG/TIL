@@ -1,0 +1,48 @@
+Props란 무엇인가?
+Props는 "Properties"의 약자로, 리액트 컴포넌트에 데이터를 전달하기 위해 사용되는 객체입니다. 
+컴포넌트 외부에서 전달된 데이터를 나타내며, 컴포넌트는 이 데이터를 읽기만 할 수 있고 변경할 수는 없습니다. 
+다시 말해, props는 컴포넌트의 입력 값입니다.
+
+Props의 주요 특징
+읽기 전용(Read-Only): 컴포넌트 내부에서 props를 변경할 수 없습니다. 불변성을 유지함으로써 예측 가능한 동작을 보장합니다.
+단방향 데이터 흐름(One-Way Data Flow): 부모 컴포넌트에서 자식 컴포넌트로 데이터가 흐릅니다. 자식 컴포넌트는 props를 통해 전달받은 데이터를 표시하거나 사용할 수 있지만, 직접 수정할 수는 없습니다.
+유연한 데이터 전달: 다양한 타입의 데이터를 props로 전달할 수 있습니다. 문자열, 숫자, 배열, 객체, 함수 등 다양한 형태의 데이터를 전달하여 컴포넌트 간 상호작용을 가능하게 합니다.
+ex)
+// 부모 컴포넌트
+import React from 'react';
+import ChildComponent from './ChildComponent';
+
+function ParentComponent() {
+  const message = "Hello from Parent Component!";
+  
+  return (
+    <div>
+      <ChildComponent message={message} />
+    </div>
+  );
+}
+
+export default ParentComponent;
+
+// 자식 컴포넌트
+import React from 'react';
+
+function ChildComponent(props) {
+  return (
+    <div>
+      <p>{props.message}</p>
+    </div>
+  );
+}
+
+export default ChildComponent;
+
+---------------------------------------------------------------
+
+표현식(Expression)과 문(Statement)의 차이
+표현식(Expression): 값으로 평가될 수 있는 코드 조각입니다. 예를 들어, 2 + 2, myVar, someFunction(), 삼항 연산자 condition ? trueValue : falseValue 등이 있습니다.
+
+문(Statement): 특정 작업을 수행하지만 값으로 평가되지 않는 코드 조각입니다. 예를 들어, if, for, while 등의 제어 구조가 포함됩니다.
+
+왜 JSX 중괄호 안에 if 문을 쓸 수 없을까?
+JSX의 중괄호 안에는 값으로 평가될 수 있는 표현식만 올 수 있기 때문입니다. if 문은 값을 반환하지 않으며, 따라서 JSX 중괄호 안에서는 사용할 수 없습니다.
