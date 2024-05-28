@@ -1,0 +1,70 @@
+Geolocation API 
+웹 애플리케이션이 사용자의 현재 위치 정보를 얻을 수 있도록 해주는 웹 API입니다. HTML5에서 처음 도입되었으며, 
+사용자의 위치를 추적하고 다양한 위치 기반 서비스를 제공하는 데 유용합니다. 
+아래에 Geolocation API의 주요 특징과 사용 방법을 자세히 설명하겠습니다.
+
+Geolocation API의 주요 기능
+1. 현재 위치 가져오기: 사용자의 현재 위치를 가져올 수 있습니다.
+2. 위치 변화 추적: 사용자의 위치가 변할 때마다 위치 정보를 업데이트할 수 있습니다.
+3. 오류 처리: 위치 정보 가져오기 실패 시 적절한 오류 메시지를 제공할 수 있습니다.
+
+사용예제
+ex) 
+if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+} else {
+    console.log("Geolocation is not supported by this browser.");
+}
+
+function successCallback(position) {
+    console.log("Latitude: " + position.coords.latitude);
+    console.log("Longitude: " + position.coords.longitude);
+}
+
+function errorCallback(error) {
+    console.error("Error Code = " + error.code + " - " + error.message);
+}
+
+위치 변화 추적
+
+if (navigator.geolocation) {
+    navigator.geolocation.watchPosition(successCallback, errorCallback);
+} else {
+    console.log("Geolocation is not supported by this browser.");
+}
+
+function successCallback(position) {
+    console.log("Latitude: " + position.coords.latitude);
+    console.log("Longitude: " + position.coords.longitude);
+}
+
+function errorCallback(error) {
+    console.error("Error Code = " + error.code + " - " + error.message);
+}
+
+getCurrentPosition(): 한 번 호출하여 사용자의 현재 위치를 가져옵니다.
+successCallback: 위치를 성공적으로 가져왔을 때 실행되는 함수입니다.
+errorCallback: 위치를 가져오는 데 실패했을 때 실행되는 함수입니다.
+watchPosition(): 위치가 변경될 때마다 지속적으로 위치 정보를 업데이트합니다.
+successCallback: 위치가 변경될 때마다 호출되는 함수입니다.
+errorCallback: 위치 정보를 가져오는 데 실패했을 때 호출되는 함수입니다.
+
+coords: 위치 정보를 담고 있는 객체로, 주요 속성은 다음과 같습니다.
+latitude: 위도
+longitude: 경도
+altitude: 고도 (일부 기기에서는 제공되지 않을 수 있음)
+accuracy: 위도와 경도의 정확도 (미터 단위)
+altitudeAccuracy: 고도의 정확도 (미터 단위, 일부 기기에서는 제공되지 않을 수 있음)
+heading: 진행 방향 (도 단위, 일부 기기에서는 제공되지 않을 수 있음)
+speed: 속도 (미터/초, 일부 기기에서는 제공되지 않을 수 있음)
+timestamp: 위치 정보가 생성된 시간 (밀리초 단위)
+
+권한 요청
+Geolocation API는 사용자의 위치 정보를 요청할 때 브라우저가 사용자에게 권한을 요청합니다. 
+사용자가 위치 정보 제공을 허용해야 위치 정보를 얻을 수 있습니다.
+
+보안 및 개인정보 보호
+HTTPS: Geolocation API는 HTTPS를 통해서만 작동합니다. 이는 사용자 위치 정보의 보안을 강화하기 위함입니다.
+사용자 동의: 위치 정보를 제공받기 위해서는 반드시 사용자의 동의를 받아야 합니다.
+
+Geolocation API는 웹 애플리케이션이 사용자에게 더 나은 위치 기반 서비스를 제공할 수 있도록 도와주는 강력한 도구입니다. 하지만 사용자 개인정보 보호와 보안에 주의하며 적절하게 사용해야 합니다.
