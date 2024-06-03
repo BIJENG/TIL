@@ -1,0 +1,34 @@
+Apache Tomcat 
+Java Servlet, JavaServer Pages (JSP), Java Expression Language, Java WebSocket과 같은 Java 기술을 지원하는 오픈 소스 웹 서버이자 서블릿 컨테이너입니다. 
+Tomcat은 웹 애플리케이션을 배포하고 관리할 수 있는 기능을 제공하며, Java 웹 애플리케이션을 실행하기 위한 환경을 제공합니다. 
+
+주요 기능과 특징
+1. Servlet 컨테이너:
+Java 서블릿을 실행할 수 있는 환경을 제공합니다. 서블릿은 Java 기반의 웹 요청 및 응답을 처리하는 서버 측 프로그램입니다.
+
+2. JSP 엔진:
+JSP 파일을 컴파일하고 실행하여 동적 웹 페이지를 생성합니다. JSP는 HTML 내에 Java 코드를 삽입할 수 있는 기술입니다.
+
+3. 웹 소켓 지원:
+실시간 양방향 통신을 가능하게 하는 웹 소켓 API를 지원합니다. 이는 채팅 애플리케이션, 실시간 데이터 스트리밍 등에 유용합니다.
+
+4. 내장형 웹 서버:
+Tomcat은 자체적으로 HTTP 서버 기능을 가지고 있어 별도의 웹 서버 없이도 웹 애플리케이션을 제공할 수 있습니다. 필요에 따라 Apache HTTP 서버 등과 연동할 수도 있습니다.
+
+5. 보안 기능:
+사용자 인증 및 권한 부여, SSL/TLS 암호화를 지원하여 안전한 웹 애플리케이션을 제공합니다.
+
+설치 및 실행 방법
+
+google 에 아파치 톰캣을 치고 사이트 접속
+왼쪽 바 다운로드 부분에 Tomcat10 설치 (32-bit/64-bit Windows Service Installer (pgp, sha512) ) 설치
+설치 중 초기화 코드 9094 포트 9090 설정 (기본포트 9090 설정시 2개의 포트는 여분으로 둠)
+설치 폴더에 conf에 server를 vscode로 실행후 맨밑
+<Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs" prefix="localhost_access_log" suffix=".txt" pattern="%h %l %u %t "%r" %s %b"/>
+위에 아래 코드 작성(아파치 톰캣에 기본페이지가 사용자의 서버로 설정되지않고 아파치톰캣이 index로 설정되어 초기 설정 세팅을 바꿔줘야함)
+<Context path="" docBase="C:/Users/BJ/Documents/project/spiritsage/myboard_2.2_병준_상권_0523_chatbot개선(SpritSage)/myboard_2.2_병준_상권_0523_chatbot개선(SpritSage)" reloadable="false"/>
+
+저장 후에 vscode로 프로젝트를 연뒤 왼쪽 하단 MAVEN을 눌러 나오는 프로젝트에 오른쪽 마우스 클릭
+clean -> install -> package 순으로 완료 후에 해당 프로젝트 경로로 들어가 target 폴더에 war 압축파일을 복사한뒤 
+아파치 톰캣 설치 경로 webapps에 압축파일 붙어놓기함(자동으로 함축을 풀음)
+윈도우키 컴퓨터관리에 서비스 및 응용프로그램 -> 서비스에 들어가서 아파치톰캣 실행
