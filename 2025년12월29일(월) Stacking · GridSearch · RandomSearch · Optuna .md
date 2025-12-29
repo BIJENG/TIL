@@ -168,6 +168,7 @@ Bayesian Optimization
 ---
 
 ### 5.3 Optuna 탐색 흐름
+
 초기 Trial: 거의 랜덤 탐색
 성능이 좋은 영역 파악
 해당 영역을 더 자주 탐색
@@ -178,6 +179,7 @@ Bayesian Optimization
 ---
 
 ### 5.4 Optuna를 여러 번 실행해야 하는 이유
+
 확률적 탐색 기법
 초기 탐색 경로가 실행마다 다름
 → 5회 이상 반복 실행하여 변화 추세 관찰
@@ -189,6 +191,7 @@ Bayesian Optimization
 ---
 
 ### 5.5 실습 결과 요약 (Pima Diabetes)
+
 LightGBM: 가장 안정적인 성능
 XGBoost: 성능 변동 존재
 CatBoost: 범주형 변수가 없어 상대적으로 불리
@@ -197,6 +200,7 @@ CatBoost: 범주형 변수가 없어 상대적으로 불리
 ---
 
 ## 6. 핵심 요약 한 장
+
 GridSearch  → 완전 탐색 (느림)
 RandomSearch → 확률 탐색 (빠름)
 Optuna → 기억하는 탐색 (효율적)
