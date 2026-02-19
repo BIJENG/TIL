@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text" id="name" placeholder="이름을 입력해라">
+    <div id="preview"></div>
+    
+    <script>
+        // const btn = document.querySelector("button");
+        const input = document.querySelector("#name");
+        const preview = document.querySelector("#preview");
+
+        // function clickButton() {
+        //     btn.textContent = "클릭됨";
+        // }
+
+
+        // btn.addEventListener("click", clickButton);
+
+        input.addEventListener("input", function(){
+            preview.textContent = input.value;
+        });
+    </script>
+</body>
+</html>

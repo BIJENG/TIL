@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="box">마우스를 올려보세요</div>
+
+    <script>
+        const box = document.querySelector("#box");
+
+        box.addEventListener("mouseover", function() {
+            box.style.backgroundColor = "lightblue";
+            box.textContent = "마우스가 올라갔어요!";
+        });
+
+        // box.addEventListener("mouseout", function() {
+        //     box.style.backgroundColor = "";
+        //     box.textContent = "마우스를 올려보세요";
+        // });
+
+        box.addEventListener("mouseout", () => {
+            box.style.backgroundColor = "";
+            box.textContent = "마우스를 올려보세요";
+        });
+
+    </script>
+</body>
+</html>
