@@ -1,4 +1,7 @@
-from fastapi import FastAPI, Path, Query, Body, status, HTTPException
+from fastapi import FastAPI, Path, Query, Body, status, HTTPException, Depends
+from sqlalchemy import select
+from db_connection import SessionFactory, get_session
+from models import User
 from schema import UserSignUpRequest, UserResponse, UserUpdateRequest
 
 app = FastAPI()
@@ -15,32 +18,32 @@ from fastapi import FastAPI
 app = FastAPI()
 
 # 1. 데이터를 밖으로 빼서 어디서든 접근 가능하게 합니다.
-users = [
-    {"id": 1, "name": "alex", "age": 20},
-    {"id": 2, "name": "tom", "age": 30},
-    {"id": 3, "name": "hank", "age": 40},
-    {"id": 4, "name": "jane", "age": 50},
-    {"id": 5, "name": "mike", "age": 60},
-]
-
-def hello_world():
-    return {"msg": "hello_world"}
+# users = [
+#     {"id": 1, "name": "alex", "age": 20},
+#     {"id": 2, "name": "tom", "age": 30},
+#     {"id": 3, "name": "hank", "age": 40},
+#     {"id": 4, "name": "jane", "age": 50},
+#     {"id": 5, "name": "mike", "age": 60},
+# ]
 
 # 전체 사용자 리스트를 반환하는 함수
 def get_all_users():
     return users
-
-@app.get("/hello")
-def root_handler():
-    return hello_world()
 
 # 전체 사용자 조회 API
 @app.get("/users",
         response_model=list[UserResponse], # 응답은 UserResponse 형태의 리스트로 반환하겠다.
         status_code=status.HTTP_200_OK
         )
-def get_users_handlers():
-    return get_all_users()
+def get_users_handlers(
+    session = Depends(get_session) # get_session 함수의 반환값을 session 매개변수로 전달
+):
+
+    #statement: 구문 -> SELECT * FROM user
+    stmt = select(User)
+    result = session.execute(stmt)
+    users = result.scalars().all() # scalars() -> User 객체만 뽑아서 반환, all() -> 전체 결과를 리스트로 반환
+    return users
 
 # 회원 검색 API
 # @app.get("/users/search")
@@ -114,15 +117,15 @@ def search_user_handler(
         )
 def get_user_handler(
     user_id: int = Path(..., ge=1, description="user_id는 1이상"),
-    field: str = Query(None, description="출력할 필드 선택(id 또는 name)"),
+    session = Depends(get_session)
 ):
-    if user_id > len(users):
+    stmt = select(User).where(User.id == user_id)
+    result = session.execute(stmt)
+    user = result.scalar_one_or_none() # scalar_one_or_none() -> 결과가 하나면 User 객체 반환, 결과가 없으면 None 반환, 결과가 여러 개면 에러 발생
+    
+    if user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="존재하지 않는 사용자의 ID입니다.")
     
-    user = users[user_id -1]
-
-    if field in ("id", "name"):
-        return {field: user[field]}
     return user
 
 
@@ -148,15 +151,29 @@ def sign_up_handler(body: UserSignUpRequest):
     # body 데이터가 문제 없으면 -> 핸들러 함수로 전달
     # body 데이터가 문제 있으면 -> 422 에러 발생
 
-    new_user = {
-        "id": len(users) + 1,
-        "name": body.name,
-        "age": body.age
-    }
-    users.append(new_user)
-    # name, age만 응답 -> response_model이랑 안 맞음 -> FastAPI ResponseValidationError 발생
+    # id -> 데이터베이스가 관리하도록함
+    new_user = User(name=body.name, age=body.age)
 
-    return {"name": body.name, "age": body.age}
+    # DB 작업 단위 & 임시 저장소
+    session = SessionFactory()
+
+    # with 문 벗어나는 순간 close() 자동 호출
+    with SessionFactory() as session:
+        session.add(new_user)
+        session.commit()
+    
+    return new_user
+    
+    
+    # new_user = {
+    #     "id": len(users) + 1,
+    #     "name": body.name,
+    #     "age": body.age
+    # }
+    # users.append(new_user)
+    # # name, age만 응답 -> response_model이랑 안 맞음 -> FastAPI ResponseValidationError 발생
+
+    # return {"name": body.name, "age": body.age}
 
 ################################################################################################
 
@@ -177,26 +194,49 @@ def sign_up_handler(body: UserSignUpRequest):
         )
 def update_user_handler(
     user_id: int = Path(..., ge=1),
-    body: UserUpdateRequest = Body(...)
+    body: UserUpdateRequest = Body(...),
+    session = Depends(get_session)
     
 ):
-    # 1) user_id 유효성 검사
-    if user_id > len(users):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="존재하지 않는 사용자의 ID입니다.")
-    
     if body.name is None and body.age is None:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="수정할 정보가 없습니다.")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="name과 age 중 하나는 필수로 입력해야 합니다.")
+
     
-    # 2) 사용자 조회
-    user = users[user_id - 1]
-
-    # 3) 사용자 정보 수정
-
+    stmt = select(User).where(User.id == user_id)
+    result = session.execute(stmt)
+    user = result.scalar_one_or_none()
+        
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="존재하지 않는 사용자의 ID입니다.")
+        
     if body.name is not None:
-        user["name"] = body.name
-
+        user.name = body.name
     if body.age is not None:
-        user["age"] = body.age
+        user.age = body.age
+        
+    session.commit()
 
-    # 4) 응답 반환
     return user
+
+######################################################################
+
+# 회원 탈퇴 API
+@app.delete(
+    "/users/{user_id}",
+    status_code=status.HTTP_204_NO_CONTENT
+)
+def delete_user_handler(
+    user_id: int = Path(..., ge=1),
+    session = Depends(get_session)
+):
+    stmt = select(User).where(User.id == user_id)
+    result = session.execute(stmt)
+    user = result.scalar_one_or_none()
+        
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="존재하지 않는 사용자의 ID입니다.")
+        
+    session.delete(user)
+    session.commit()
+    
+    return {"message": f"사용자 ID {user_id}가 성공적으로 삭제되었습니다."}
