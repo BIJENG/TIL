@@ -1,21 +1,26 @@
-from fastapi import FastAPI, Path, Query, Body, status, HTTPException, Depends
+import anyio
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, Path, Query, Body, status, HTTPException, Depends, BackgroundTasks
 from sqlalchemy import select
 from db_connection import SessionFactory, get_session
 from models import User
 from schema import UserSignUpRequest, UserResponse, UserUpdateRequest
 
-app = FastAPI()
+def send_email(name: str):
+    import time
+    time.sleep(5)  # 5초 대기
+    print(f"{name}님에게 이메일을 보냈습니다.")
 
+@asynccontextmanager
+async def lifespan(_):
+    # 서버 실행될 때, 실행되는 부분
+    limiter = anyio.to_thread.current_default_thread_limiter()
+    limiter.total_tokens = 200 # 스레드 풀 개수를 200개로 증량
+    yield
+    # 서버 종료될 때, 실행되는 부분
 
-# HTTP 요청 -> '게시물' 을 '생성' 하고 싶다.
-# GET /users
-# DELETE/ comments/1
-
-# 서버에 GET / 요청이 들어오면, root_handler를 실행한다.
-
-from fastapi import FastAPI
-
-app = FastAPI()
+# lifespan -> FastAPI 서버가 실행되고 종료될 때, 특정 리소스를 생성하고 정리하는 기능
+app = FastAPI(lifespan=lifespan)
 
 # 1. 데이터를 밖으로 빼서 어디서든 접근 가능하게 합니다.
 # users = [
@@ -25,10 +30,6 @@ app = FastAPI()
 #     {"id": 4, "name": "jane", "age": 50},
 #     {"id": 5, "name": "mike", "age": 60},
 # ]
-
-# 전체 사용자 리스트를 반환하는 함수
-def get_all_users():
-    return users
 
 # 전체 사용자 조회 API
 @app.get("/users",
@@ -142,26 +143,26 @@ def get_user_handler(
         "/users/sign-up", 
         status_code=status.HTTP_201_CREATED,
         response_model=UserResponse # 응답은 UserResponse 형태로 반환하겠다.
+        
         )
-def sign_up_handler(body: UserSignUpRequest):
-    # 핸들러 함수에 선언한 매개 변수의 타입힌트가 BaseModel을 상속 받은 경우, 요청 본문에서 가져옴
-    # 데이터 가져오면서, 타입힌트에 선언한 데이터 구조와 맞는지 검사
-
-    # body = UserSignUpRequest(name=..., age=...)
-    # body 데이터가 문제 없으면 -> 핸들러 함수로 전달
-    # body 데이터가 문제 있으면 -> 422 에러 발생
-
-    # id -> 데이터베이스가 관리하도록함
+@app.post(
+    "/users/sign-up", 
+    status_code=status.HTTP_201_CREATED,
+    response_model=UserResponse
+)
+def sign_up_handler(
+    body: UserSignUpRequest,
+    background_tasks: BackgroundTasks,  # BackgroundTasks 객체를 주입
+    session = Depends(get_session)  # <-- 의존성 주입 추가!
+):
+    # 1. 입력 데이터를 바탕으로 새로운 User 객체 생성
     new_user = User(name=body.name, age=body.age)
 
-    # DB 작업 단위 & 임시 저장소
-    session = SessionFactory()
+    # 2. DB 작업 (FastAPI가 주입해준 session 사용)
+    session.add(new_user)
+    session.commit()
 
-    # with 문 벗어나는 순간 close() 자동 호출
-    with SessionFactory() as session:
-        session.add(new_user)
-        session.commit()
-    
+    background_tasks.add_task(send_email, body.name)  # 회원가입이 완료된 후에 이메일 보내는 작업을 백그라운드로 등록
     return new_user
     
     
