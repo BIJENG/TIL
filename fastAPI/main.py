@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Path, Query, Body, status, HTTPException, Depends, BackgroundTasks
 from sqlalchemy import select
 from db_connection import SessionFactory, get_session
+from db_connection_async import AsyncSessionFactory, get_async_session
 from models import User
 from schema import UserSignUpRequest, UserResponse, UserUpdateRequest
 
@@ -36,13 +37,13 @@ app = FastAPI(lifespan=lifespan)
         response_model=list[UserResponse], # 응답은 UserResponse 형태의 리스트로 반환하겠다.
         status_code=status.HTTP_200_OK
         )
-def get_users_handlers(
-    session = Depends(get_session) # get_session 함수의 반환값을 session 매개변수로 전달
+async def get_users_handlers(
+    session = Depends(get_async_session) # get_session 함수의 반환값을 session 매개변수로 전달
 ):
 
     #statement: 구문 -> SELECT * FROM user
     stmt = select(User)
-    result = session.execute(stmt)
+    result = await session.execute(stmt)
     users = result.scalars().all() # scalars() -> User 객체만 뽑아서 반환, all() -> 전체 결과를 리스트로 반환
     return users
 
@@ -110,18 +111,22 @@ def search_user_handler(
     #name이라는 key로 넘어오는 Query Parameter 값을 사용하겠다.
     return {"id": 0, "name": name, "age": age}
 
+
+
+# 단일 사용자 조회 API
+
 # ?field=id => id값만 반환
 # ?field=name => name 값만 반환
 @app.get("/users/{user_id}",
         response_model=UserResponse,
         status_code=status.HTTP_200_OK
         )
-def get_user_handler(
+async def get_user_handler(
     user_id: int = Path(..., ge=1, description="user_id는 1이상"),
-    session = Depends(get_session)
+    session = Depends(get_async_session)
 ):
     stmt = select(User).where(User.id == user_id)
-    result = session.execute(stmt)
+    result = await session.execute(stmt)
     user = result.scalar_one_or_none() # scalar_one_or_none() -> 결과가 하나면 User 객체 반환, 결과가 없으면 None 반환, 결과가 여러 개면 에러 발생
     
     if user is None:
@@ -150,17 +155,17 @@ def get_user_handler(
     status_code=status.HTTP_201_CREATED,
     response_model=UserResponse
 )
-def sign_up_handler(
+async def sign_up_handler(
     body: UserSignUpRequest,
     background_tasks: BackgroundTasks,  # BackgroundTasks 객체를 주입
-    session = Depends(get_session)  # <-- 의존성 주입 추가!
+    session = Depends(get_async_session)  # <-- 의존성 주입 추가!
 ):
     # 1. 입력 데이터를 바탕으로 새로운 User 객체 생성
     new_user = User(name=body.name, age=body.age)
 
     # 2. DB 작업 (FastAPI가 주입해준 session 사용)
     session.add(new_user)
-    session.commit()
+    await session.commit()
 
     background_tasks.add_task(send_email, body.name)  # 회원가입이 완료된 후에 이메일 보내는 작업을 백그라운드로 등록
     return new_user
@@ -193,10 +198,10 @@ def sign_up_handler(
         status_code=status.HTTP_200_OK,
         response_model=UserResponse
         )
-def update_user_handler(
+async def update_user_handler(
     user_id: int = Path(..., ge=1),
     body: UserUpdateRequest = Body(...),
-    session = Depends(get_session)
+    session = Depends(get_async_session)
     
 ):
     if body.name is None and body.age is None:
@@ -204,7 +209,7 @@ def update_user_handler(
 
     
     stmt = select(User).where(User.id == user_id)
-    result = session.execute(stmt)
+    result = await session.execute(stmt)
     user = result.scalar_one_or_none()
         
     if user is None:
@@ -215,7 +220,7 @@ def update_user_handler(
     if body.age is not None:
         user.age = body.age
         
-    session.commit()
+    await session.commit()
 
     return user
 
@@ -226,18 +231,18 @@ def update_user_handler(
     "/users/{user_id}",
     status_code=status.HTTP_204_NO_CONTENT
 )
-def delete_user_handler(
+async def delete_user_handler(
     user_id: int = Path(..., ge=1),
-    session = Depends(get_session)
+    session = Depends(get_async_session)
 ):
     stmt = select(User).where(User.id == user_id)
-    result = session.execute(stmt)
+    result = await session.execute(stmt)
     user = result.scalar_one_or_none()
         
     if user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="존재하지 않는 사용자의 ID입니다.")
         
     session.delete(user)
-    session.commit()
+    await session.commit()
     
     return {"message": f"사용자 ID {user_id}가 성공적으로 삭제되었습니다."}

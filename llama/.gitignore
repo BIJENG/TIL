@@ -1,0 +1,7 @@
+# Llama 폴더 내의 대용량 모델 파일 제외
+models/
+*.gguf
+
+# 가상환경 제외
+.venv/
+__pycache__/
