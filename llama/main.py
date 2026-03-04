@@ -67,4 +67,8 @@ def generate_chat_handler(
         media_type="text/event-stream",
     )
 
-print(response)
+gen = event_generator()
+
+"Python" = next(gen)
+"은" = next(gen)
+"프로그래밍" = next(gen)
