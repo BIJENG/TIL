@@ -2,6 +2,7 @@ import json
 import uuid
 from redis import asyncio as aredis
 from fastapi import FastAPI, Body
+from fastapi.responses import StreamingResponse
 from sqlalchemy import text
 from database import SessionFactory
 
@@ -38,13 +39,20 @@ async def chat_handler(
         await redis_client.lpush("inference_queue", json.dumps(job))
         
         # 5. 결과를 기다립니다.
-        result = None
-        async for message in pubsub.listen():
-            if message["type"] == "message":
-                result = message["data"]
-                break
-                
-        return {"id": job_id, "result": result}
+        async def event_generator():
+            async for message in pubsub.listen():
+                if message["type"] == "message":
+                    data = message["data"]
+                    if data == "[DONE]":
+                        break
+                    yield data
+                    
+
+
+        return StreamingResponse(
+            event_generator(),
+            media_type="text/event-stream"
+        )
         
     finally:
         # 6. (중요) 작업이 끝나면 구독을 해제하고 연결을 닫습니다.
