@@ -10,8 +10,6 @@ __pycache__/
 Thumbs.db
 .DS_Store
 
-worker/models/
-*
 
 auth/__pycache__
 database/__pycache__
