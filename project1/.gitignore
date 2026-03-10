@@ -1,0 +1,18 @@
+
+# 파이썬 가상환경 및 캐시
+.venv/
+__pycache__/
+*.pyc
+
+# 운영체제 및 에디터 설정
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+
+worker/models/
+*
+
+auth/__pycache__
+database/__pycache__
+db.sqlite
