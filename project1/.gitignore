@@ -14,3 +14,5 @@ Thumbs.db
 auth/__pycache__
 database/__pycache__
 db.sqlite
+
+.env

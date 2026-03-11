@@ -27,4 +27,9 @@ class LogInRequest(BaseModel):
     password: str = Field(..., json_schema_extra={"example":"Password123"}
     )
 
-    
+class HealthProfileCreateRequest(BaseModel):
+    age: int
+    height_cm: float
+    weight_kg: float
+    smoking: bool
+    exercise_per_week: int
