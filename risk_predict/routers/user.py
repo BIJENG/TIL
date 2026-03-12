@@ -40,6 +40,33 @@ async def signup_handler(
 
     return new_user
 
+@router.delete(
+        "/users",
+        summary="회원탈퇴 API",
+        status_code=status.HTTP_204_NO_CONTENT,
+)
+async def delete_user_handler(
+    user_id: int = Depends(verify_user),
+    session = Depends(get_session),
+):
+    stmt = select(User).where(User.id == user_id)
+    user = await session.scalar(stmt)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="user not found")
+    
+    # [2] DB에서 삭제
+    # HealthProfile 삭제
+    # HealthRiskPrediction 삭제
+
+    # await session.delete(user)
+    # await session.commit()
+    
+    # Soft Delete: 실제로 데이터를 삭제하지 않고, 개인정보를 마스킹
+    user.soft_delete()
+    await session.commit()
+
+
+
 @router.post(
     "/users/login",
     summary="로그인 API",
@@ -96,3 +123,5 @@ async def create_health_profile_handler(
     await session.commit()
     await session.refresh(new_profile)
     return new_profile
+
+
